@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, IconButton, useTheme } from "@mui/material";
+import { Box, IconButton, useTheme, Typography } from "@mui/material";
 import { useContext } from "react";
 import { ColorModeContext, tokens } from "../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
@@ -11,14 +11,20 @@ const Topbar = () => {
   const colorMode = useContext(ColorModeContext);
 
   return (
-    <Box>
-      <IconButton onClick={colorMode.toggleColorMode}>
-        {theme.palette.mode === "dark" ? (
-          <DarkModeOutlinedIcon />
-        ) : (
-          <LightModeOutlinedIcon />
-        )}
-      </IconButton>
+    <Box display="flex" justifyContent="space-between" p={2}>
+      <Box display="flex">
+        <Typography variant="h2">Chat App</Typography>
+      </Box>
+
+      <Box display="flex">
+        <IconButton onClick={colorMode.toggleColorMode}>
+          {theme.palette.mode === "dark" ? (
+            <DarkModeOutlinedIcon />
+          ) : (
+            <LightModeOutlinedIcon />
+          )}
+        </IconButton>
+      </Box>
     </Box>
   );
 };
