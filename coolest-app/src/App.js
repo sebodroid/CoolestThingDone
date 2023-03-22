@@ -2,6 +2,7 @@ import "./App.css";
 import { ColorModeContext, useMode } from "./theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Topbar from "./scenes/global/Topbar";
+import Login from "./scenes/login/Login";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -13,6 +14,7 @@ function App() {
         <div className="app">
           <main className="content">
             <Topbar />
+            <Login />
           </main>
         </div>
       </ThemeProvider>
