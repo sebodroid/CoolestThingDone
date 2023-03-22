@@ -12,6 +12,9 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import GoogleIcon from "@mui/icons-material/Google";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const theme = useTheme();
@@ -21,6 +24,12 @@ const Login = () => {
 
   const handleFormSubmit = (values) => {
     console.log(values);
+  };
+
+  const loginWithGoogle = () => {
+    console.log("Redirecting to Google login page...");
+    window.location.href = "/auth/google";
+    console.log("Redirected to Google login page!");
   };
 
   return (
@@ -33,9 +42,9 @@ const Login = () => {
     >
       <Box
         width="min(90%, 40rem)"
-        border={`3px ${colors.greenAccent[500]} solid`}
+        border={`2px ${colors.greenAccent[500]} solid`}
         borderRadius="10px"
-        backgroundOpacity
+        color="neutral"
         p={3}
       >
         <Typography variant="h2" fontWeight="600" textAlign="center" mb="30px">
@@ -91,19 +100,55 @@ const Login = () => {
                   sx={{ gridColumn: "span 4" }}
                 />
               </Box>
-              <Box display="flex" justifyContent="end" mt="20px">
+              <Box display="flex" justifyContent="center" mt="30px">
                 <Button
                   type="submit"
                   color="secondary"
                   variant="contained"
-                  sx={{ color: "#fff" }}
+                  sx={{
+                    color: "#fff",
+                    minWidth: "60%",
+                  }}
                 >
                   Sign in
                 </Button>
               </Box>
-              <IconButton>
-                <GoogleIcon sx={{ color: "#DB4437" }} />
-              </IconButton>
+              <Typography variant="h6" marginBlock="20px" textAlign="center">
+                Or Sign In Using
+              </Typography>
+              <Box display="flex" justifyContent="center" gap="10px">
+                <IconButton
+                  sx={{
+                    backgroundColor: "#DB4437",
+                  }}
+                  onClick={loginWithGoogle}
+                >
+                  <GoogleIcon sx={{ color: "#fff" }} />
+                </IconButton>
+                <IconButton
+                  sx={{
+                    backgroundColor: "#333",
+                  }}
+                >
+                  <GitHubIcon sx={{ color: "#fff" }} />
+                </IconButton>
+                <IconButton
+                  sx={{
+                    backgroundColor: "#3b5998",
+                  }}
+                >
+                  <FacebookIcon sx={{ color: "#fff" }} />
+                </IconButton>
+              </Box>
+              <Typography variant="h6" mt="20px" textAlign="center">
+                Not registered yet?{" "}
+                <Link
+                  to="/register"
+                  style={{ color: "white", textDecoration: "underline" }}
+                >
+                  Sign Up
+                </Link>
+              </Typography>
             </form>
           )}
         </Formik>
