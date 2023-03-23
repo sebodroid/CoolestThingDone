@@ -133,6 +133,7 @@ const Register = () => {
                   style={{
                     color: colors.grey[100],
                     textDecoration: "underline",
+                    fontWeight: "600",
                   }}
                 >
                   Login
