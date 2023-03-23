@@ -1,22 +1,12 @@
 import React from "react";
-import {
-  Box,
-  IconButton,
-  useTheme,
-  Typography,
-  TextField,
-  Button,
-} from "@mui/material";
+import { Box, useTheme, Typography, TextField, Button } from "@mui/material";
 import { tokens } from "../../theme";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import GoogleIcon from "@mui/icons-material/Google";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import FacebookIcon from "@mui/icons-material/Facebook";
 import { Link } from "react-router-dom";
 
-const Login = () => {
+const Register = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -25,12 +15,6 @@ const Login = () => {
   const handleFormSubmit = (values) => {
     //values are being stored here
     console.log(values);
-  };
-
-  const loginWithGoogle = () => {
-    console.log("Redirecting to Google login page...");
-    window.location.href = "/auth/google";
-    console.log("Redirected to Google login page!");
   };
 
   return (
@@ -49,7 +33,7 @@ const Login = () => {
         p={3}
       >
         <Typography variant="h2" fontWeight="600" textAlign="center" mb="30px">
-          Login
+          Register
         </Typography>
 
         <Formik
@@ -78,6 +62,20 @@ const Login = () => {
                   fullWidth
                   variant="filled"
                   type="text"
+                  label="Username"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.username}
+                  name="username"
+                  error={!!touched.username && !!errors.username}
+                  helperText={touched.username && errors.username}
+                  sx={{ gridColumn: "span 4" }}
+                />
+
+                <TextField
+                  fullWidth
+                  variant="filled"
+                  type="text"
                   label="Email"
                   onBlur={handleBlur}
                   onChange={handleChange}
@@ -100,6 +98,19 @@ const Login = () => {
                   helperText={touched.password && errors.password}
                   sx={{ gridColumn: "span 4" }}
                 />
+                <TextField
+                  fullWidth
+                  variant="filled"
+                  type="password"
+                  label="Confirm Password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.confirmPass}
+                  name="confirmPass"
+                  error={!!touched.confirmPass && !!errors.confirmPass}
+                  helperText={touched.confirmPass && errors.confirmPass}
+                  sx={{ gridColumn: "span 4" }}
+                />
               </Box>
               <Box display="flex" justifyContent="center" mt="30px">
                 <Button
@@ -111,46 +122,20 @@ const Login = () => {
                     minWidth: "100%",
                   }}
                 >
-                  Sign in
+                  Create Account
                 </Button>
               </Box>
-              <Typography variant="h6" marginBlock="20px" textAlign="center">
-                Or Sign In Using
-              </Typography>
-              <Box display="flex" justifyContent="center" gap="10px">
-                <IconButton
-                  sx={{
-                    backgroundColor: "#DB4437",
-                  }}
-                  onClick={loginWithGoogle}
-                >
-                  <GoogleIcon sx={{ color: "#fff" }} />
-                </IconButton>
-                <IconButton
-                  sx={{
-                    backgroundColor: "#333",
-                  }}
-                >
-                  <GitHubIcon sx={{ color: "#fff" }} />
-                </IconButton>
-                <IconButton
-                  sx={{
-                    backgroundColor: "#3b5998",
-                  }}
-                >
-                  <FacebookIcon sx={{ color: "#fff" }} />
-                </IconButton>
-              </Box>
+
               <Typography variant="h6" mt="20px" textAlign="center">
-                Not registered yet?{" "}
+                Already registered?{" "}
                 <Link
-                  to="/register"
+                  to="/login"
                   style={{
                     color: colors.grey[100],
                     textDecoration: "underline",
                   }}
                 >
-                  Sign Up
+                  Login
                 </Link>
               </Typography>
             </form>
@@ -162,12 +147,22 @@ const Login = () => {
 };
 
 const checkoutSchema = yup.object().shape({
-  email: yup.string().email("invalid email").required("Required"),
+  username: yup
+    .string()
+    .min(3, "Username needs to be at least 3 characters")
+    .max(25, "Username is too long")
+    .required("Required"),
+  email: yup.string().email("Invalid email").required("Required"),
   password: yup.string().required("Required"),
+  confirmPass: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords must match"),
 });
 const initialValues = {
+  username: "",
   email: "",
   password: "",
+  confirmPass: "",
 };
 
-export default Login;
+export default Register;
