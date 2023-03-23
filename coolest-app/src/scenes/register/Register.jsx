@@ -153,9 +153,18 @@ const checkoutSchema = yup.object().shape({
     .max(25, "Username is too long")
     .required("Required"),
   email: yup.string().email("Invalid email").required("Required"),
-  password: yup.string().required("Required"),
+  password: yup
+    .string()
+    .required("Required")
+    .matches(
+      // eslint-disable-next-line
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+      "Must contain 8 characters, one uppercase, one lowercase, one number and one special case character"
+    ),
+
   confirmPass: yup
     .string()
+    .required("Required")
     .oneOf([yup.ref("password"), null], "Passwords must match"),
 });
 const initialValues = {
