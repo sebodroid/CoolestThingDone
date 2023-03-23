@@ -3,6 +3,8 @@ import { ColorModeContext, useMode } from "./theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Topbar from "./scenes/global/Topbar";
 import Login from "./scenes/login/Login";
+import Register from "./scenes/register/Register";
+import Chat from "./scenes/chat/Chat";
 import { Route, Routes } from "react-router-dom";
 
 function App() {
@@ -16,7 +18,9 @@ function App() {
           <main className="content">
             <Topbar />
             <Routes>
-              <Route path="/" element={<Login />} />
+              <Route path="/" element={<Chat />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
             </Routes>
           </main>
         </div>
