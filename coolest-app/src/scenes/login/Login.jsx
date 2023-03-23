@@ -109,6 +109,7 @@ const Login = () => {
                   sx={{
                     color: "#fff",
                     minWidth: "100%",
+                    fontWeight: "600",
                   }}
                 >
                   Sign in

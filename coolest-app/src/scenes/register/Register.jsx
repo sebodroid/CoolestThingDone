@@ -120,6 +120,7 @@ const Register = () => {
                   sx={{
                     color: "#fff",
                     minWidth: "100%",
+                    fontWeight: "600",
                   }}
                 >
                   Create Account
