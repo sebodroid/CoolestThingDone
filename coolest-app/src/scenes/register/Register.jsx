@@ -157,6 +157,7 @@ const checkoutSchema = yup.object().shape({
     .string()
     .required("Required")
     .matches(
+      // eslint-disable-next-line
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
       "Must contain 8 characters, one uppercase, one lowercase, one number and one special case character"
     ),
