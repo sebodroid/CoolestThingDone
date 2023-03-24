@@ -1,23 +1,53 @@
-import { ApolloServer, gql } from 'apollo-server';
-import express from 'express';
+import { ApolloServer, gql } from 'apollo-server'
+import mongoose from 'mongoose';
+import * as dotenv from 'dotenv'
+import { User } from './User.js';
+dotenv.config()
 
-const port = 9010;
-const app = express();
+const DB_URL = process.env.DBADDRESS;
 
-const typeDefs = gql`
-  type Query {
-    greeting: String,
-    age: Int
-  }
-`;
+mongoose.connect(DB_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => console.log("MongoDB connected")).catch((err) => console.log(err));
 
-const resolvers = {
-    Query: {
-        greeting: () => "Hello World!!",
-        age: () => 23
-    }
-};
+run();
 
-const server = new ApolloServer({ typeDefs, resolvers });
-const serverInfo = await server.listen({ port: port });
-console.log(`Server running at ${serverInfo.url}`)
+async function run() {
+  const user = new User({ userName: "user104", email: "user104@hotmail.com", pwd: "user104Password!" });
+  await user.save();
+  console.log(user);
+}
+
+// const user103 = new userSchema({
+//   userName: "user103",
+//   email: "user103@hotmail.com",
+//   pwd: "user103Password!"
+// })
+
+// const server = new ApolloServer({ typeDefs, resolvers });
+// mongoose.connection.once("open", () =>
+//   server.listen(() => console.log("We make magic over at localhost:9010"))
+// );
+
+
+
+//CODE REGARDING GQL
+// const typeDefs = gql`
+//   type Query {
+//     userName: String,
+//     message: String
+//   }
+// `;
+// var myList = ["user102", "Hello world!!!"]
+
+// const resolvers = {
+//   Query: {
+//     userName: () => myList[0], //Displays user102
+//     message: () => myList[1] //Displays "Hello world!!!"
+//   }
+// };
+
+// const server = new ApolloServer({ typeDefs, resolvers });
+// const serverInfo = await server.listen({ port: process.env.PORT });
+// console.log(`Server runnin at ${process.env.PORT}`)
