@@ -15,6 +15,8 @@ import GoogleIcon from "@mui/icons-material/Google";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import { Link } from "react-router-dom";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
 const Login = () => {
   const theme = useTheme();
@@ -27,11 +29,24 @@ const Login = () => {
     console.log(values);
   };
 
-  const loginWithGoogle = () => {
-    console.log("Redirecting to Google login page...");
-    window.location.href = "/auth/google";
-    console.log("Redirected to Google login page!");
-  };
+  const login = useGoogleLogin({
+    onSuccess: async (response) => {
+      try {
+        const res = await axios.get(
+          "https://www.googleapis.com/oauth2/v3/userinfo",
+          {
+            headers: {
+              Authorization: `Bearer ${response.access_token}`,
+            },
+          }
+        );
+
+        console.log(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+  });
 
   return (
     <Box
@@ -43,9 +58,9 @@ const Login = () => {
     >
       <Box
         width="min(90%, 30rem)"
-        border={`2px ${colors.greenAccent[500]} solid`}
         borderRadius="10px"
         color="neutral"
+        boxShadow={`0px 0px 30px ${colors.greenAccent[500]}`}
         p={3}
       >
         <Typography variant="h2" fontWeight="600" textAlign="center" mb="30px">
@@ -109,6 +124,7 @@ const Login = () => {
                   sx={{
                     color: "#fff",
                     minWidth: "100%",
+                    fontWeight: "600",
                   }}
                 >
                   Sign in
@@ -122,7 +138,7 @@ const Login = () => {
                   sx={{
                     backgroundColor: "#DB4437",
                   }}
-                  onClick={loginWithGoogle}
+                  onClick={() => login()}
                 >
                   <GoogleIcon sx={{ color: "#fff" }} />
                 </IconButton>
@@ -148,6 +164,7 @@ const Login = () => {
                   style={{
                     color: colors.grey[100],
                     textDecoration: "underline",
+                    fontWeight: "600",
                   }}
                 >
                   Sign Up

@@ -27,7 +27,7 @@ const Register = () => {
     >
       <Box
         width="min(90%, 30rem)"
-        border={`2px ${colors.greenAccent[500]} solid`}
+        boxShadow={`0px 0px 30px ${colors.greenAccent[500]}`}
         borderRadius="10px"
         color="neutral"
         p={3}
@@ -120,6 +120,7 @@ const Register = () => {
                   sx={{
                     color: "#fff",
                     minWidth: "100%",
+                    fontWeight: "600",
                   }}
                 >
                   Create Account
@@ -133,6 +134,7 @@ const Register = () => {
                   style={{
                     color: colors.grey[100],
                     textDecoration: "underline",
+                    fontWeight: "600",
                   }}
                 >
                   Login
