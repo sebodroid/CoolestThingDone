@@ -27,7 +27,7 @@ const Register = () => {
     >
       <Box
         width="min(90%, 30rem)"
-        border={`2px ${colors.greenAccent[500]} solid`}
+        boxShadow={`0px 0px 30px ${colors.greenAccent[500]}`}
         borderRadius="10px"
         color="neutral"
         p={3}
