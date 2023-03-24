@@ -1,23 +1,40 @@
-import { ApolloServer, gql } from 'apollo-server';
-import express from 'express';
-
-const port = 9010;
-const app = express();
+import { ApolloServer, gql } from 'apollo-server'
+import mongoose from 'mongoose';
+import * as dotenv from 'dotenv'
+dotenv.config()
+//const typeDefs = './typeDefs';
+//const resolvers = './resolvers';
 
 const typeDefs = gql`
   type Query {
-    greeting: String,
-    age: Int
+    userName: String,
+    message: String
   }
 `;
 
+var myList = ["user102", "Hello world!!!"]
+
 const resolvers = {
-    Query: {
-        greeting: () => "Hello World!!",
-        age: () => 23
-    }
+  Query: {
+    userName: () => myList[0], //Displays user102
+    message: () => myList[1] //Displays "Hello world!!!"
+  }
 };
 
-const server = new ApolloServer({ typeDefs, resolvers });
-const serverInfo = await server.listen({ port: port });
-console.log(`Server running at ${serverInfo.url}`)
+const username = encodeURIComponent("<userName>");
+
+const password = encodeURIComponent("<password>");
+
+const DB_URL = "mongodb://userName:password@127.0.0.1:27017/dbName";
+
+mongoose.connect(DB_URL, {
+  useNewUrlParser: true
+}).then(() => console.log("MongoDB connected")).catch((err) => console.log(err));;
+
+// const server = new ApolloServer({ typeDefs, resolvers });
+// const serverInfo = await server.listen({ port: 9010 });
+// console.log(`Server runnin at ${process.env.UNAME}`)
+
+// mongoose.connection.once("open", () =>
+//   server.start(() => console.log("We make magic over at localhost:9010"))
+// );
