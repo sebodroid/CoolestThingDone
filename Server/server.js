@@ -1,53 +1,50 @@
-import { ApolloServer, gql } from 'apollo-server'
+import express from "express";
+import expressGraphQL from "express-graphql";
+import { GraphQLSchema, GraphQLObjectType, GraphQLString } from "graphql";
 import mongoose from 'mongoose';
 import * as dotenv from 'dotenv'
-import { User } from './User.js';
+import { User } from './Models.js';
 dotenv.config()
+
+const app = express();
+
+const schema = new GraphQLSchema({
+  query: new GraphQLObjectType({
+    name: "HelloWorld",
+    fields: () => ({
+      message: {
+        type: GraphQLString,
+        resolve: () => "Helloworld"
+      }
+    })
+  })
+})
+
+app.use('/graphql', expressGraphQL.graphqlHTTP({
+  schema: schema,
+  graphiql: true
+}))
+app.listen(5000., () => console.log("Server is running"))
 
 const DB_URL = process.env.DBADDRESS;
 
-mongoose.connect(DB_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log("MongoDB connected")).catch((err) => console.log(err));
+// mongoose.connect(DB_URL, { //Connection to the DB
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true
+// }).then(() => console.log("MongoDB connected")).catch((err) => console.log(err));
 
-run();
+//run();
 
-async function run() {
-  const user = new User({ userName: "user104", email: "user104@hotmail.com", pwd: "user104Password!" });
-  await user.save();
-  console.log(user);
+
+
+async function run() { //Function to create a new DB user 
+  try {
+    const user = new User({ userName: "user106", email: "user105@hotmail.com", pwd: "password" });
+    await user.save();
+    // const user = await User.find({ userName: "testUser101" })
+    console.log("\n\n", user, "\n\n");
+  } catch (e) {
+    console.log("\n\n", e.message, "\n\n")
+  }
 }
 
-// const user103 = new userSchema({
-//   userName: "user103",
-//   email: "user103@hotmail.com",
-//   pwd: "user103Password!"
-// })
-
-// const server = new ApolloServer({ typeDefs, resolvers });
-// mongoose.connection.once("open", () =>
-//   server.listen(() => console.log("We make magic over at localhost:9010"))
-// );
-
-
-
-//CODE REGARDING GQL
-// const typeDefs = gql`
-//   type Query {
-//     userName: String,
-//     message: String
-//   }
-// `;
-// var myList = ["user102", "Hello world!!!"]
-
-// const resolvers = {
-//   Query: {
-//     userName: () => myList[0], //Displays user102
-//     message: () => myList[1] //Displays "Hello world!!!"
-//   }
-// };
-
-// const server = new ApolloServer({ typeDefs, resolvers });
-// const serverInfo = await server.listen({ port: process.env.PORT });
-// console.log(`Server runnin at ${process.env.PORT}`)
