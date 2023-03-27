@@ -5,16 +5,41 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Link } from "react-router-dom";
+import { useMutation, gql } from "@apollo/client";
+
+const REGISTER_USER = gql`
+  mutation RegisterUser($input: UserInput!) {
+    registerUser(input: $input) {
+      id
+      username
+      email
+    }
+  }
+`;
 
 const Register = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  const [registerUser, { loading, error, data }] = useMutation(REGISTER_USER);
+
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
-  const handleFormSubmit = (values) => {
-    //values are being stored here
-    console.log(values);
+  const handleFormSubmit = async (values) => {
+    try {
+      const { data } = await registerUser({
+        variables: {
+          input: {
+            username: values.username,
+            email: values.email,
+            pwd: values.password,
+          },
+        },
+      });
+      console.log("User created:", data.registerUser);
+    } catch (error) {
+      console.error("Error creating user:", error);
+    }
   };
 
   return (
