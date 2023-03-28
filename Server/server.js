@@ -1,9 +1,17 @@
 import express from "express";
 import expressGraphQL from "express-graphql";
-import { GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLNonNull, GraphQLList } from "graphql";
+import {
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLNonNull,
+  GraphQLList,
+  GraphQLInputObjectType,
+} from "graphql";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 import { User } from "./Models.js";
+import resolvers from "./resolvers.js";
 import cors from "cors";
 dotenv.config();
 
@@ -19,40 +27,47 @@ const UserType = new GraphQLObjectType({
   fields: () => ({
     userName: { type: new GraphQLNonNull(GraphQLString) },
     email: { type: new GraphQLNonNull(GraphQLString) },
-    pwd: { type: new GraphQLNonNull(GraphQLString) }
-  })
+    pwd: { type: new GraphQLNonNull(GraphQLString) },
+  }),
 });
 
 const UserListType = new GraphQLObjectType({
   name: "UserList",
-  description: 'Return a list of user types',
+  description: "Return a list of user types",
   fields: () => ({
-    users: {
+    profiles: {
       type: new GraphQLList(UserType),
-      resolve: () => userListData
-    }
-  })
+      resolve: () => userListData,
+    },
+  }),
 });
 
 const schema = new GraphQLSchema({
   query: UserListType,
-  // fields: () => ({
-  //   resolve: async () => {
-  //     try {
-  //       const user = new User({
-  //         userName: "user107",
-  //         email: "user107@hotmail.com",
-  //         pwd: "password",
-  //       });
-  //       await user.save();
-  //       return user;
-  //     } catch (e) {
-  //       throw new Error(`Failed to create user: ${e.message}`);
-  //     }
-  //   },
-  // })
+  mutation: new GraphQLObjectType({
+    name: "Mutation",
+    fields: {
+      registerUser: {
+        type: UserType,
+        args: {
+          input: {
+            type: new GraphQLNonNull(
+              new GraphQLInputObjectType({
+                name: "UserInput",
+                fields: () => ({
+                  userName: { type: new GraphQLNonNull(GraphQLString) },
+                  email: { type: new GraphQLNonNull(GraphQLString) },
+                  pwd: { type: new GraphQLNonNull(GraphQLString) },
+                }),
+              })
+            ),
+          },
+        },
+        resolve: resolvers.Mutation.registerUser,
+      },
+    },
+  }),
 });
-
 
 app.use(
   "/graphql",
@@ -65,21 +80,24 @@ app.listen(5000, () => console.log("Server is running"));
 
 const DB_URL = process.env.DBADDRESS;
 
-mongoose.connect(DB_URL, { //Connection to the DB
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log("MongoDB connected")).catch((err) => console.log(err));
+mongoose
+  .connect(DB_URL, {
+    //Connection to the DB
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.log(err));
 
-
-async function getUsers() { //function to grab all the users from the DB
+async function getUsers() {
+  //function to grab all the users from the DB
   try {
-    const userList = await User.find()
-    return userList
+    const userList = await User.find();
+    return userList;
   } catch (e) {
-    console.log("ERROR", e.message)
+    console.log("ERROR", e.message);
   }
 }
-
 
 //run();
 

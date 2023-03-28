@@ -1,4 +1,5 @@
-const bcrypt = require("bcryptjs");
+import bcrypt from "bcryptjs";
+import { User } from "./models.js";
 
 const resolvers = {
   Mutation: {
@@ -25,3 +26,5 @@ const resolvers = {
     },
   },
 };
+
+export default resolvers;
