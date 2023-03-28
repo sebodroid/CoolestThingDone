@@ -7,21 +7,21 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { Link } from "react-router-dom";
 import { useMutation, gql } from "@apollo/client";
 
-const REGISTER_USER = gql`
-  mutation RegisterUser($input: UserInput!) {
-    registerUser(input: $input) {
-      id
-      username
-      email
-    }
-  }
-`;
-
 const Register = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const [registerUser, { loading, error, data }] = useMutation(REGISTER_USER);
+  const REGISTER_USER = gql`
+    mutation RegisterUser($input: UserInput!) {
+      registerUser(input: $input) {
+        userName
+        email
+        pwd
+      }
+    }
+  `;
+
+  const [registerUser] = useMutation(REGISTER_USER);
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
@@ -30,9 +30,9 @@ const Register = () => {
       const { data } = await registerUser({
         variables: {
           input: {
-            userName: values.username,
+            userName: values.userName,
             email: values.email,
-            pwd: values.password,
+            pwd: values.pwd,
           },
         },
       });
@@ -90,10 +90,10 @@ const Register = () => {
                   label="Username"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.username}
-                  name="username"
-                  error={!!touched.username && !!errors.username}
-                  helperText={touched.username && errors.username}
+                  value={values.userName}
+                  name="userName"
+                  error={!!touched.userName && !!errors.userName}
+                  helperText={touched.userName && errors.userName}
                   sx={{ gridColumn: "span 4" }}
                 />
 
@@ -117,10 +117,10 @@ const Register = () => {
                   label="Password"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.password}
-                  name="password"
-                  error={!!touched.password && !!errors.password}
-                  helperText={touched.password && errors.password}
+                  value={values.pwd}
+                  name="pwd"
+                  error={!!touched.pwd && !!errors.pwd}
+                  helperText={touched.pwd && errors.pwd}
                   sx={{ gridColumn: "span 4" }}
                 />
                 <TextField
@@ -174,13 +174,13 @@ const Register = () => {
 };
 
 const checkoutSchema = yup.object().shape({
-  username: yup
+  userName: yup
     .string()
     .min(3, "Username needs to be at least 3 characters")
     .max(25, "Username is too long")
     .required("Required"),
   email: yup.string().email("Invalid email").required("Required"),
-  password: yup
+  pwd: yup
     .string()
     .required("Required")
     .matches(
@@ -192,12 +192,12 @@ const checkoutSchema = yup.object().shape({
   confirmPass: yup
     .string()
     .required("Required")
-    .oneOf([yup.ref("password"), null], "Passwords must match"),
+    .oneOf([yup.ref("pwd"), null], "Passwords must match"),
 });
 const initialValues = {
-  username: "",
+  userName: "",
   email: "",
-  password: "",
+  pwd: "",
   confirmPass: "",
 };
 
