@@ -3,20 +3,20 @@ const bcrypt = require("bcryptjs");
 const resolvers = {
   Mutation: {
     async registerUser(_, { input }) {
-      const { username, email, pwd } = input;
+      const { userName, email, pwd } = input;
 
       // Check if user with same email or username already exists
       const userExists = await User.findOne({
-        $or: [{ username }, { email }],
+        $or: [{ userName }, { email }],
       });
       if (userExists) {
         throw new Error("User with that email or username already exists");
       }
 
       // Hash the password and create the new user
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(pwd, 10);
       const user = new User({
-        username,
+        userName,
         email,
         pwd: hashedPassword,
       });
