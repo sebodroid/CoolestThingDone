@@ -30,7 +30,7 @@ const Register = () => {
       const { data } = await registerUser({
         variables: {
           input: {
-            username: values.username,
+            userName: values.username,
             email: values.email,
             pwd: values.password,
           },
