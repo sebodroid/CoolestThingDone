@@ -58,7 +58,18 @@ const MessageBoardType = new GraphQLObjectType({
 });
 
 const schema = new GraphQLSchema({
-  query: UserListType,
+  query: new GraphQLObjectType({
+    name: "Query",
+    fields: {
+      getUser: {
+        type: UserType,
+        args: {
+          userName: { type: new GraphQLNonNull(GraphQLString) },
+        },
+        resolve: resolvers.Query.getUserByEmail,
+      },
+    },
+  }),
   mutation: new GraphQLObjectType({
     name: "Mutation",
     fields: {

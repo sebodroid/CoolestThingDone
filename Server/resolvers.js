@@ -2,6 +2,12 @@ import bcrypt from "bcryptjs";
 import { User } from "./models.js";
 
 const resolvers = {
+  Query: {
+    getUserByEmail: async (_, { email }) => {
+      return await User.findOne({ email });
+    },
+  },
+
   Mutation: {
     async registerUser(_, { input }) {
       const { userName, email, pwd } = input;

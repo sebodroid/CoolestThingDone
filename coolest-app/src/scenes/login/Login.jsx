@@ -17,6 +17,8 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import { Link } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import { useQuery, gql } from "@apollo/client";
+import client from "../../index.js";
 
 const Login = () => {
   const theme = useTheme();
@@ -24,9 +26,27 @@ const Login = () => {
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
-  const handleFormSubmit = (values) => {
-    //values are being stored here
-    console.log(values);
+  const GET_USER_BY_EMAIL = gql`
+    query GetUserByEmail($email: String!) {
+      getUserByEmail(email: $email) {
+        email
+        pwd
+      }
+    }
+  `;
+
+  const handleFormSubmit = async (values) => {
+    try {
+      const { data } = await client.query({
+        query: GET_USER_BY_EMAIL,
+        variables: { email: values.email },
+      });
+
+      console.log(data.getUserByEmail);
+      // check if the retrieved password matches the entered password
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const login = useGoogleLogin({

@@ -20,3 +20,5 @@ root.render(
     </GoogleOAuthProvider>
   </BrowserRouter>
 );
+
+export default client;
