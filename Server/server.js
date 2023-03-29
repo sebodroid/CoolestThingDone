@@ -6,11 +6,11 @@ import {
   GraphQLString,
   GraphQLNonNull,
   GraphQLList,
-  GraphQLInputObjectType,
+  GraphQLInputObjectType
 } from "graphql";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
-import { User } from "./Models.js";
+import { User, MessageBoard } from "./Models.js";
 import resolvers from "./resolvers.js";
 import cors from "cors";
 dotenv.config();
@@ -18,8 +18,6 @@ dotenv.config();
 const app = express();
 
 app.use(cors());
-
-const userListData = getUsers(); // stores Users from DB
 
 const UserType = new GraphQLObjectType({
   name: "User",
@@ -37,9 +35,26 @@ const UserListType = new GraphQLObjectType({
   fields: () => ({
     profiles: {
       type: new GraphQLList(UserType),
-      resolve: () => userListData,
+      resolve: () => getUsers(),
     },
   }),
+});
+
+const ChatsType = new GraphQLObjectType({
+  name: "Chats",
+  description: "Returns chats",
+  fields: () => ({
+    withWho: { type: new GraphQLNonNull(Array) }
+  })
+});
+
+const MessageBoardType = new GraphQLObjectType({
+  name: "MessageBoard",
+  description: "Returning message boards",
+  fields: () => ({
+    userName: { type: new GraphQLNonNull(GraphQLString) },
+    chats: { type: ChatsType }
+  })
 });
 
 const schema = new GraphQLSchema({
@@ -66,7 +81,7 @@ const schema = new GraphQLSchema({
         resolve: resolvers.Mutation.registerUser,
       },
     },
-  }),
+  })
 });
 
 app.use(
@@ -96,6 +111,16 @@ async function getUsers() {
     return userList;
   } catch (e) {
     console.log("ERROR", e.message);
+  }
+}
+
+
+async function getMessages() {
+  try {
+    const msgBoard = await MessageBoard.find({ userName: "testUser101" })
+    return msgBoard;
+  } catch (e) {
+    console.log("MESSAGE ERROR", e.message)
   }
 }
 
