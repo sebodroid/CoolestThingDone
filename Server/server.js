@@ -6,13 +6,14 @@ import {
   GraphQLString,
   GraphQLNonNull,
   GraphQLList,
-  GraphQLInputObjectType
+  GraphQLInputObjectType,
 } from "graphql";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 import { User, MessageBoard } from "./Models.js";
 import resolvers from "./resolvers.js";
 import cors from "cors";
+// import AuthPayloadType from "./auth.js";
 dotenv.config();
 
 const app = express();
@@ -44,8 +45,8 @@ const ChatsType = new GraphQLObjectType({
   name: "Chats",
   description: "Returns chats",
   fields: () => ({
-    withWho: { type: new GraphQLNonNull(Array) }
-  })
+    withWho: { type: new GraphQLNonNull(Array) },
+  }),
 });
 
 const MessageBoardType = new GraphQLObjectType({
@@ -53,21 +54,22 @@ const MessageBoardType = new GraphQLObjectType({
   description: "Returning message boards",
   fields: () => ({
     userName: { type: new GraphQLNonNull(GraphQLString) },
-    chats: { type: ChatsType }
-  })
+    chats: { type: ChatsType },
+  }),
 });
 
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: "Query",
     fields: {
-      getUser: {
-        type: UserType,
-        args: {
-          userName: { type: new GraphQLNonNull(GraphQLString) },
-        },
-        resolve: resolvers.Query.getUserByEmail,
+      profiles: {
+        type: UserListType,
+        resolve: () => getUsers(),
       },
+      // messageBoard: {
+      //   type: MessageBoardType,
+      //   resolve: () => getMessages(),
+      // },
     },
   }),
   mutation: new GraphQLObjectType({
@@ -91,8 +93,16 @@ const schema = new GraphQLSchema({
         },
         resolve: resolvers.Mutation.registerUser,
       },
+      loginUser: {
+        type: UserType,
+        args: {
+          email: { type: new GraphQLNonNull(GraphQLString) },
+          pwd: { type: new GraphQLNonNull(GraphQLString) },
+        },
+        resolve: resolvers.Mutation.loginUser,
+      },
     },
-  })
+  }),
 });
 
 app.use(
@@ -125,13 +135,12 @@ async function getUsers() {
   }
 }
 
-
 async function getMessages() {
   try {
-    const msgBoard = await MessageBoard.find({ userName: "testUser101" })
+    const msgBoard = await MessageBoard.find({ userName: "testUser101" });
     return msgBoard;
   } catch (e) {
-    console.log("MESSAGE ERROR", e.message)
+    console.log("MESSAGE ERROR", e.message);
   }
 }
 
