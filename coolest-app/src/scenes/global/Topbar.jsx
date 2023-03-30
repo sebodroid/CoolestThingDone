@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { ColorModeContext } from "../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import Logo from "../../assets/kebo-nobackground.png";
+import Logo from "../../assets/kebo-nobackground.svg";
 import { Link } from "react-router-dom";
 
 const Topbar = () => {

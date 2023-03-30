@@ -1,13 +1,9 @@
 import bcrypt from "bcryptjs";
 import { User } from "./models.js";
+import pkg from "jsonwebtoken";
+const { jwt } = pkg;
 
 const resolvers = {
-  Query: {
-    getUserByEmail: async (_, { email }) => {
-      return await User.findOne({ email });
-    },
-  },
-
   Mutation: {
     async registerUser(_, { input }) {
       const { userName, email, pwd } = input;
@@ -29,6 +25,26 @@ const resolvers = {
       });
       await user.save();
       return user;
+    },
+
+    async loginUser(_, { input }) {
+      const { email, password } = input;
+
+      // Check if user with email exists
+      const user = await User.findOne({ email });
+      if (!user) {
+        throw new Error("User with that email does not exist");
+      }
+
+      // Check if password matches hashed password
+      const isMatch = await bcrypt.compare(password, user.pwd);
+      if (!isMatch) {
+        throw new Error("Incorrect password");
+      }
+
+      // Generate JWT token and return user
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+      return { user, token };
     },
   },
 };

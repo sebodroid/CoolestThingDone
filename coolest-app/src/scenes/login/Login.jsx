@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   IconButton,
@@ -6,6 +6,7 @@ import {
   Typography,
   TextField,
   Button,
+  Snackbar,
 } from "@mui/material";
 import { tokens } from "../../theme";
 import { Formik } from "formik";
@@ -17,36 +18,74 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import { Link } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import { useQuery, gql } from "@apollo/client";
-import client from "../../index.js";
+import { useMutation, gql } from "@apollo/client";
 
 const Login = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [error, setError] = useState("");
 
-  const isNonMobile = useMediaQuery("(min-width:600px)");
+  const ErrorSnackbar = ({ message, onClose }) => {
+    return (
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        open={true}
+        autoHideDuration={5000}
+        onClose={onClose}
+        message={message}
+        action={
+          <Button
+            backgroundColor={colors.redAccent[500]}
+            color="secondary"
+            size="small"
+            onClick={onClose}
+          >
+            Close
+          </Button>
+        }
+      />
+    );
+  };
 
-  const GET_USER_BY_EMAIL = gql`
-    query GetUserByEmail($email: String!) {
-      getUserByEmail(email: $email) {
+  const LOGIN_USER = gql`
+    mutation LoginUser($input: UserInput!) {
+      loginUser(input: $input) {
         email
         pwd
       }
     }
   `;
 
+  const [loginUser] = useMutation(LOGIN_USER);
+
+  const isNonMobile = useMediaQuery("(min-width:600px)");
+
   const handleFormSubmit = async (values) => {
     try {
-      const { data } = await client.query({
-        query: GET_USER_BY_EMAIL,
-        variables: { email: values.email },
+      const { data } = await loginUser({
+        variables: {
+          input: {
+            email: values.email,
+            pwd: values.pwd,
+          },
+        },
       });
-
-      console.log(data.getUserByEmail);
-      // check if the retrieved password matches the entered password
+      console.log("Successfully logged in:", data.loginUser);
     } catch (error) {
-      console.error(error);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setError(error.response.data.message);
+      } else {
+        setError("Something went wrong");
+      }
     }
+  };
+
+  const handleCloseError = () => {
+    setError("");
   };
 
   const login = useGoogleLogin({
@@ -194,6 +233,7 @@ const Login = () => {
           )}
         </Formik>
       </Box>
+      {error && <ErrorSnackbar message={error} onClose={handleCloseError} />}
     </Box>
   );
 };
