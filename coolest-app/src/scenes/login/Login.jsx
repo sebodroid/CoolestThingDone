@@ -61,7 +61,7 @@ const Login = () => {
         variables: {
           input: {
             email: values.email,
-            pwd: values.pwd,
+            pwd: values.password,
           },
         },
       });

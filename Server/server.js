@@ -62,15 +62,34 @@ const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: "Query",
     fields: {
-      profiles: {
+      userList: {
         type: UserListType,
         resolve: () => getUsers(),
+      },
+      loginUser: {
+        type: UserType,
+        args: {
+          input: {
+            type: new GraphQLNonNull(
+              new GraphQLInputObjectType({
+                name: "userInput",
+                fields: () =>
+                ({
+                  email: { type: new GraphQLNonNull(GraphQLString) },
+                  pwd: { type: new GraphQLNonNull(GraphQLString) },
+                }),
+              })
+            ),
+          },
+        },
+        resolve: resolvers.Query.loginUser,
       },
       // messageBoard: {
       //   type: MessageBoardType,
       //   resolve: () => getMessages(),
       // },
     },
+
   }),
   mutation: new GraphQLObjectType({
     name: "Mutation",
@@ -93,6 +112,7 @@ const schema = new GraphQLSchema({
         },
         resolve: resolvers.Mutation.registerUser,
       },
+<<<<<<< HEAD
       loginUser: {
         type: UserType,
         args: {
@@ -101,6 +121,8 @@ const schema = new GraphQLSchema({
         },
         resolve: resolvers.Query.loginUser,
       },
+=======
+>>>>>>> 7a5a30762bbcc71040f48d00b1751e6d2d292bb2
     },
   }),
 });
