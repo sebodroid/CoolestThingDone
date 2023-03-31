@@ -52,7 +52,6 @@ const resolvers = {
   Query: {
     async loginUser(_, { input }) {
       const { email, pwd } = input;
-
       // Check if user with email exists
       const user = await User.findOne({ email });
       if (!user) {
@@ -66,8 +65,10 @@ const resolvers = {
       }
 
       // Generate JWT token and return user
-      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
-      return { user, token };
+      //const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+      return user;
+
+      //return { user, token };
     },
   }
 };
