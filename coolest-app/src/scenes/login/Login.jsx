@@ -18,7 +18,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import { Link } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import { useMutation, gql } from "@apollo/client";
+import { useMutation, gql, useQuery, useLazyQuery } from "@apollo/client";
 
 const Login = () => {
   const theme = useTheme();
@@ -48,7 +48,7 @@ const Login = () => {
   };
 
   const LOGIN_USER = gql`
-    mutation LoginUser($input: UserInput!) {
+    query LoginUser($input: userInput!) {
       loginUser(input: $input) {
         email
         pwd
@@ -56,8 +56,8 @@ const Login = () => {
     }
   `;
 
-  const [loginUser] = useMutation(LOGIN_USER);
-
+  const [loginUser] = useLazyQuery(LOGIN_USER);
+  
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
   const handleFormSubmit = async (values) => {
@@ -66,10 +66,11 @@ const Login = () => {
         variables: {
           input: {
             email: values.email,
-            pwd: values.pwd,
+            pwd: values.password,
           },
         },
       });
+
       console.log("Successfully logged in:", data.loginUser);
     } catch (error) {
       if (
