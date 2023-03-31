@@ -18,7 +18,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import { Link } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useLazyQuery } from "@apollo/client";
 
 const Login = () => {
   const theme = useTheme();
@@ -43,7 +43,7 @@ const Login = () => {
   };
 
   const LOGIN_USER = gql`
-    query LoginUser($input: UserInput!) {
+    query LoginUser($input: userInput!) {
       loginUser(input: $input) {
         email
         pwd
@@ -51,7 +51,7 @@ const Login = () => {
     }
   `;
 
-  const [loginUser] = useQuery(LOGIN_USER);
+  const [loginUser] = useLazyQuery(LOGIN_USER);
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
@@ -165,10 +165,10 @@ const Login = () => {
                   label="Password"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.pwd}
-                  name="pwd"
-                  error={!!touched.pwd && !!errors.pwd}
-                  helperText={touched.pwd && errors.pwd}
+                  value={values.password}
+                  name="password"
+                  error={!!touched.password && !!errors.password}
+                  helperText={touched.password && errors.password}
                   sx={{ gridColumn: "span 4" }}
                 />
               </Box>
