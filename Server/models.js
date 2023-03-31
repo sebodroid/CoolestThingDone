@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ObjectId } from 'mongodb'
+import { ObjectId } from "mongodb";
 
 const userSchema = new mongoose.Schema({
   userName: {
@@ -26,8 +26,8 @@ const messageBoardSchema = new mongoose.Schema({
   },
   chats: {
     withWho: {
-      type: Array
-    }
+      type: Array,
+    },
   },
   userId: {
     type: ObjectId,
@@ -39,19 +39,19 @@ const messageSchema = new mongoose.Schema({
     type: String,
   },
   createdAt: {
-    type: String
+    type: String,
   },
   message: {
-    type: String
+    type: String,
   },
   messageId: {
-    type: ObjectId
-  }
+    type: ObjectId,
+  },
 });
-
 
 export const User =
   mongoose.models.profiles || mongoose.model("profiles", userSchema);
 
 export const MessageBoard =
-  mongoose.models.messageboards || mongoose.model("messageboards", messageBoardSchema);
+  mongoose.models.messageboards ||
+  mongoose.model("messageboards", messageBoardSchema);

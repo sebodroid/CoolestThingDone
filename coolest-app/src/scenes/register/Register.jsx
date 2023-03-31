@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, useTheme, Typography, TextField, Button, Snackbar } from "@mui/material";
+import {
+  Box,
+  useTheme,
+  Typography,
+  TextField,
+  Button,
+  Snackbar,
+} from "@mui/material";
 import { tokens } from "../../theme";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -7,13 +14,12 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { Link } from "react-router-dom";
 import { useMutation, gql } from "@apollo/client";
 
-
 const Register = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [error, setError] = useState("");
 
-const ErrorSnackbar = ({ message, onClose }) => {
+  const ErrorSnackbar = ({ message, onClose }) => {
     return (
       <Snackbar
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
@@ -23,7 +29,6 @@ const ErrorSnackbar = ({ message, onClose }) => {
         message={message}
         action={
           <Button
-            backgroundColor={colors.redAccent[500]}
             color="secondary"
             size="small"
             onClick={onClose}
@@ -37,7 +42,6 @@ const ErrorSnackbar = ({ message, onClose }) => {
       />
     );
   };
-
 
   const REGISTER_USER = gql`
     mutation RegisterUser($input: UserInput!) {

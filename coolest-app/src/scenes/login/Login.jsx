@@ -34,12 +34,7 @@ const Login = () => {
         onClose={onClose}
         message={message}
         action={
-          <Button
-            backgroundColor={colors.redAccent[500]}
-            color="secondary"
-            size="small"
-            onClick={onClose}
-          >
+          <Button color="secondary" size="small" onClick={onClose}>
             Close
           </Button>
         }
@@ -57,12 +52,12 @@ const Login = () => {
   `;
 
   const [loginUser] = useLazyQuery(LOGIN_USER);
-  
+
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
   const handleFormSubmit = async (values) => {
     try {
-     await loginUser({
+      await loginUser({
         variables: {
           input: {
             email: values.email,
@@ -70,10 +65,7 @@ const Login = () => {
           },
         },
       }).then((e) =>
-        e.error
-          ? setError(e.error.graphQLErrors[0].message)
-          : console.log("No error")
-
+        e.error ? setError(e.error.graphQLErrors[0].message) : ""
       );
 
       console.log("Successfully logged in");
