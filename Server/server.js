@@ -99,7 +99,7 @@ const schema = new GraphQLSchema({
           email: { type: new GraphQLNonNull(GraphQLString) },
           pwd: { type: new GraphQLNonNull(GraphQLString) },
         },
-        resolve: resolvers.Mutation.loginUser,
+        resolve: resolvers.Query.loginUser,
       },
     },
   }),

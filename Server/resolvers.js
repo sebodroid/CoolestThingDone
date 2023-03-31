@@ -26,7 +26,8 @@ const resolvers = {
       await user.save();
       return user;
     },
-
+  },
+  Query: {
     async loginUser(_, { input }) {
       const { email, password } = input;
 

@@ -18,7 +18,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import { Link } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import { useMutation, gql } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 
 const Login = () => {
   const theme = useTheme();
@@ -34,12 +34,7 @@ const Login = () => {
         onClose={onClose}
         message={message}
         action={
-          <Button
-            backgroundColor={colors.redAccent[500]}
-            color="secondary"
-            size="small"
-            onClick={onClose}
-          >
+          <Button color="secondary" size="small" onClick={onClose}>
             Close
           </Button>
         }
@@ -48,7 +43,7 @@ const Login = () => {
   };
 
   const LOGIN_USER = gql`
-    mutation LoginUser($input: UserInput!) {
+    query LoginUser($input: UserInput!) {
       loginUser(input: $input) {
         email
         pwd
@@ -56,7 +51,7 @@ const Login = () => {
     }
   `;
 
-  const [loginUser] = useMutation(LOGIN_USER);
+  const [loginUser] = useQuery(LOGIN_USER);
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
@@ -70,6 +65,7 @@ const Login = () => {
           },
         },
       });
+      localStorage.setItem("token", data.loginUser.token);
       console.log("Successfully logged in:", data.loginUser);
     } catch (error) {
       if (
@@ -80,6 +76,7 @@ const Login = () => {
         setError(error.response.data.message);
       } else {
         setError("Something went wrong");
+        console.log(values.pwd);
       }
     }
   };
@@ -110,7 +107,7 @@ const Login = () => {
   return (
     <Box
       m="20px"
-      height="80vh"
+      height="700px"
       display="flex"
       alignItems="center"
       justifyContent="center"
@@ -168,10 +165,10 @@ const Login = () => {
                   label="Password"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.password}
-                  name="password"
-                  error={!!touched.password && !!errors.password}
-                  helperText={touched.password && errors.password}
+                  value={values.pwd}
+                  name="pwd"
+                  error={!!touched.pwd && !!errors.pwd}
+                  helperText={touched.pwd && errors.pwd}
                   sx={{ gridColumn: "span 4" }}
                 />
               </Box>
@@ -240,11 +237,11 @@ const Login = () => {
 
 const checkoutSchema = yup.object().shape({
   email: yup.string().email("invalid email").required("Required"),
-  password: yup.string().required("Required"),
+  pwd: yup.string().required("Required"),
 });
 const initialValues = {
   email: "",
-  password: "",
+  pwd: "",
 };
 
 export default Login;

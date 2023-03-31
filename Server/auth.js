@@ -5,7 +5,6 @@ const UserType = new GraphQLObjectType({
   description: "return user",
   fields: () => ({
     userName: { type: new GraphQLNonNull(GraphQLString) },
-    email: { type: new GraphQLNonNull(GraphQLString) },
     pwd: { type: new GraphQLNonNull(GraphQLString) },
   }),
 });
