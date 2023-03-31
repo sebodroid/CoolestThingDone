@@ -10,7 +10,7 @@ import {
 } from "graphql";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
-import { User, MessageBoard } from "./Models.js";
+import { User, MessageBoard } from "./models.js";
 import resolvers from "./resolvers.js";
 import cors from "cors";
 // import AuthPayloadType from "./auth.js";
@@ -25,6 +25,15 @@ const UserType = new GraphQLObjectType({
   description: "return user",
   fields: () => ({
     userName: { type: new GraphQLNonNull(GraphQLString) },
+    email: { type: new GraphQLNonNull(GraphQLString) },
+    pwd: { type: new GraphQLNonNull(GraphQLString) },
+  }),
+});
+
+const UserLogin = new GraphQLObjectType({
+  name: "Login",
+  description: "login user",
+  fields: () => ({
     email: { type: new GraphQLNonNull(GraphQLString) },
     pwd: { type: new GraphQLNonNull(GraphQLString) },
   }),
@@ -67,14 +76,13 @@ const schema = new GraphQLSchema({
         resolve: () => getUsers(),
       },
       loginUser: {
-        type: UserType,
+        type: UserLogin,
         args: {
           input: {
             type: new GraphQLNonNull(
               new GraphQLInputObjectType({
                 name: "userInput",
-                fields: () =>
-                ({
+                fields: () => ({
                   email: { type: new GraphQLNonNull(GraphQLString) },
                   pwd: { type: new GraphQLNonNull(GraphQLString) },
                 }),
@@ -89,7 +97,6 @@ const schema = new GraphQLSchema({
       //   resolve: () => getMessages(),
       // },
     },
-
   }),
   mutation: new GraphQLObjectType({
     name: "Mutation",

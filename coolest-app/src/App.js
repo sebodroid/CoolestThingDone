@@ -6,6 +6,7 @@ import Login from "./scenes/login/Login";
 import Register from "./scenes/register/Register";
 import Chat from "./scenes/chat/Chat";
 import { Route, Routes } from "react-router-dom";
+import PrivateRoutes from "./utils/PrivateRoutes";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -18,10 +19,11 @@ function App() {
           <main className="content">
             <Topbar />
             <Routes>
-              <Route path="/" element={<Chat />} />
+              <Route element={<PrivateRoutes />}>
+                <Route path="/" element={<Chat />} exact />
+              </Route>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/chat" element={<Chat />} />
             </Routes>
           </main>
         </div>
