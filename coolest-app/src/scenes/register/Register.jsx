@@ -38,7 +38,6 @@ const ErrorSnackbar = ({ message, onClose }) => {
     );
   };
 
-
   const REGISTER_USER = gql`
     mutation RegisterUser($input: UserInput!) {
       registerUser(input: $input) {
