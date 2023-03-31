@@ -18,7 +18,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import { Link } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import { useMutation, gql, useQuery, useLazyQuery } from "@apollo/client";
+import { gql, useLazyQuery } from "@apollo/client";
 
 const Login = () => {
   const theme = useTheme();
@@ -62,26 +62,23 @@ const Login = () => {
 
   const handleFormSubmit = async (values) => {
     try {
-      const { data } = await loginUser({
+     await loginUser({
         variables: {
           input: {
             email: values.email,
             pwd: values.password,
           },
         },
-      });
+      }).then((e) =>
+        e.error
+          ? setError(e.error.graphQLErrors[0].message)
+          : console.log("No error")
 
-      console.log("Successfully logged in:", data.loginUser);
+      );
+
+      console.log("Successfully logged in");
     } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        setError(error.response.data.message);
-      } else {
-        setError("Something went wrong");
-      }
+      console.log(error);
     }
   };
 

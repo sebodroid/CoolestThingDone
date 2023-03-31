@@ -1,5 +1,5 @@
-import React from "react";
-import { Box, useTheme, Typography, TextField, Button } from "@mui/material";
+import React, { useState } from "react";
+import { Box, useTheme, Typography, TextField, Button, Snackbar } from "@mui/material";
 import { tokens } from "../../theme";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -7,9 +7,37 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { Link } from "react-router-dom";
 import { useMutation, gql } from "@apollo/client";
 
+
 const Register = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [error, setError] = useState("");
+
+const ErrorSnackbar = ({ message, onClose }) => {
+    return (
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        open={true}
+        autoHideDuration={5000}
+        onClose={onClose}
+        message={message}
+        action={
+          <Button
+            backgroundColor={colors.redAccent[500]}
+            color="secondary"
+            size="small"
+            onClick={onClose}
+            sx={{
+              wordBreak: "break-word",
+            }}
+          >
+            Close
+          </Button>
+        }
+      />
+    );
+  };
+
 
   const REGISTER_USER = gql`
     mutation RegisterUser($input: UserInput!) {
@@ -38,8 +66,12 @@ const Register = () => {
       });
       console.log("User created:", data.registerUser);
     } catch (error) {
-      console.error("Error creating user:", error);
+      setError(error.graphQLErrors[0].message);
     }
+  };
+
+  const handleCloseError = () => {
+    setError("");
   };
 
   return (
@@ -169,6 +201,7 @@ const Register = () => {
           )}
         </Formik>
       </Box>
+      {error && <ErrorSnackbar message={error} onClose={handleCloseError} />}
     </Box>
   );
 };
