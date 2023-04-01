@@ -7,6 +7,7 @@ import {
   GraphQLNonNull,
   GraphQLList,
   GraphQLInputObjectType,
+
 } from "graphql";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
@@ -39,22 +40,29 @@ const UserLogin = new GraphQLObjectType({
   }),
 });
 
-const UserListType = new GraphQLObjectType({
-  name: "UserList",
-  description: "Return a list of user types",
-  fields: () => ({
-    profiles: {
-      type: new GraphQLList(UserType),
-      resolve: () => getUsers(),
-    },
-  }),
-});
-
 const ChatsType = new GraphQLObjectType({
-  name: "Chats",
+  name: "chats",
   description: "Returns chats",
   fields: () => ({
-    withWho: { type: new GraphQLNonNull(Array) },
+    withWho: {
+      type: new GraphQLList(new GraphQLObjectType({
+        name: "withWho",
+        fields: () => ({
+          friendUname: { type: new GraphQLNonNull(GraphQLString) },
+          messages: {
+            type: new GraphQLList(new GraphQLNonNull(new GraphQLObjectType({
+              name: "message",
+              fields: () => ({
+                createdBy: { type: new GraphQLNonNull(GraphQLString) },
+                createdAt: { type: new GraphQLNonNull(GraphQLString) },
+                message: { type: new GraphQLNonNull(GraphQLString) },
+                messageId: { type: new GraphQLNonNull(GraphQLString) }
+              })
+            })))
+          }
+        })
+      }))
+    }
   }),
 });
 
@@ -72,7 +80,7 @@ const schema = new GraphQLSchema({
     name: "Query",
     fields: {
       userList: {
-        type: UserListType,
+        type: new GraphQLNonNull(new GraphQLList(UserType)),
         resolve: () => getUsers(),
       },
       loginUser: {
@@ -92,10 +100,10 @@ const schema = new GraphQLSchema({
         },
         resolve: resolvers.Query.loginUser,
       },
-      // messageBoard: {
-      //   type: MessageBoardType,
-      //   resolve: () => getMessages(),
-      // },
+      messageBoard: {
+        type: new GraphQLNonNull(new GraphQLList(MessageBoardType)),
+        resolve: () => getMessages(),
+      },
     },
   }),
   mutation: new GraphQLObjectType({
@@ -155,7 +163,7 @@ async function getUsers() {
 
 async function getMessages() {
   try {
-    const msgBoard = await MessageBoard.find({ userName: "testUser101" });
+    const msgBoard = await MessageBoard.find();
     return msgBoard;
   } catch (e) {
     console.log("MESSAGE ERROR", e.message);

@@ -25,29 +25,33 @@ const messageBoardSchema = new mongoose.Schema({
     type: String,
   },
   chats: {
-    withWho: {
-      type: Array,
-    },
+    withWho: [{
+      friendUname: {
+        type: String,
+      },
+      messages: [{
+        createdBy: {
+          type: String,
+        },
+        createdAt: {
+          type: String,
+        },
+        message: {
+          type: String,
+        },
+        messageId: {
+          type: ObjectId,
+        },
+      }]
+
+    }],
+
   },
   userId: {
     type: ObjectId,
   },
 });
 
-const messageSchema = new mongoose.Schema({
-  createdBy: {
-    type: String,
-  },
-  createdAt: {
-    type: String,
-  },
-  message: {
-    type: String,
-  },
-  messageId: {
-    type: ObjectId,
-  },
-});
 
 export const User =
   mongoose.models.profiles || mongoose.model("profiles", userSchema);
