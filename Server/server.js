@@ -57,6 +57,7 @@ const UserLogin = new GraphQLObjectType({
   fields: () => ({
     email: { type: new GraphQLNonNull(GraphQLString) },
     pwd: { type: new GraphQLNonNull(GraphQLString) },
+    token: { type: new GraphQLNonNull(GraphQLString) },
   }),
 });
 
@@ -119,6 +120,7 @@ const schema = new GraphQLSchema({
                 fields: () => ({
                   email: { type: new GraphQLNonNull(GraphQLString) },
                   pwd: { type: new GraphQLNonNull(GraphQLString) },
+                  token: { type: new GraphQLNonNull(GraphQLString) },
                 }),
               })
             ),

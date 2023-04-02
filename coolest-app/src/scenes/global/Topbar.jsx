@@ -11,6 +11,11 @@ const Topbar = () => {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
 
+  const logoutUser = () => {
+    localStorage.setItem("token", "");
+    window.location.href = "/login"; // Redirect to login route
+  };
+
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
       <Box display="flex">
@@ -19,7 +24,8 @@ const Topbar = () => {
         </Link>
       </Box>
 
-      <Box display="flex">
+      <Box display="flex" alignItems="center" cursor="pointer">
+        {!!localStorage.getItem("token") && <p onClick={logoutUser}>Logout</p>}
         <IconButton onClick={colorMode.toggleColorMode}>
           {theme.palette.mode === "dark" ? (
             <DarkModeOutlinedIcon />

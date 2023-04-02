@@ -47,11 +47,22 @@ const Login = () => {
       loginUser(input: $input) {
         email
         pwd
+        token
       }
     }
   `;
 
-  const [loginUser] = useLazyQuery(LOGIN_USER);
+  const [loginUser] = useLazyQuery(LOGIN_USER, {
+    onCompleted: (data) => {
+      // handle the successful response here
+      localStorage.setItem("token", data.loginUser.token);
+      window.location.href = "/"; // Redirect to home route
+    },
+    onError: (err) => {
+      // handle the error here
+      console.log(error);
+    },
+  });
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
@@ -62,6 +73,7 @@ const Login = () => {
           input: {
             email: values.email,
             pwd: values.password,
+            token: "",
           },
         },
       }).then((e) => e.error && setError(e.error.graphQLErrors[0].message));

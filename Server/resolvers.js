@@ -61,7 +61,7 @@ const resolvers = {
         })
       );
 
-      return { email: user.email, pwd: user.pwd };
+      return { email: user.email, pwd: user.pwd, token: token };
     },
   },
 };
