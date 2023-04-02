@@ -100,7 +100,11 @@ const Login = () => {
           }
         );
 
-        console.log(res.data);
+        //This is how you can access things such as the user's name for later use
+        console.log(res.data.name);
+
+        localStorage.setItem("token", response.access_token);
+        window.location.href = "/"; // Redirect to home route
       } catch (err) {
         console.log(err);
       }

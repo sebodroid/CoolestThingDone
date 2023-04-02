@@ -24,8 +24,12 @@ const Topbar = () => {
         </Link>
       </Box>
 
-      <Box display="flex" alignItems="center" cursor="pointer">
-        {!!localStorage.getItem("token") && <p onClick={logoutUser}>Logout</p>}
+      <Box display="flex" alignItems="center" gap="10px">
+        {!!localStorage.getItem("token") && (
+          <p style={{ cursor: "pointer" }} onClick={logoutUser}>
+            Logout
+          </p>
+        )}
         <IconButton onClick={colorMode.toggleColorMode}>
           {theme.palette.mode === "dark" ? (
             <DarkModeOutlinedIcon />

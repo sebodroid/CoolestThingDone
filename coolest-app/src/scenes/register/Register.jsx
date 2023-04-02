@@ -68,7 +68,7 @@ const Register = () => {
           },
         },
       });
-      console.log("User created:", data.registerUser);
+      window.location.href = "/login"; // Redirect to login route to login and receive a token
     } catch (error) {
       setError(error.graphQLErrors[0].message);
     }
