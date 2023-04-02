@@ -64,9 +64,7 @@ const Login = () => {
             pwd: values.password,
           },
         },
-      }).then((e) =>
-        e.error ? setError(e.error.graphQLErrors[0].message) : ""
-      );
+      }).then((e) => e.error && setError(e.error.graphQLErrors[0].message));
 
       console.log("Successfully logged in");
     } catch (error) {

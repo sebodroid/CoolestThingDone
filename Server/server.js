@@ -7,19 +7,39 @@ import {
   GraphQLNonNull,
   GraphQLList,
   GraphQLInputObjectType,
-
 } from "graphql";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 import { User, MessageBoard } from "./models.js";
 import resolvers from "./resolvers.js";
 import cors from "cors";
-// import AuthPayloadType from "./auth.js";
+import cookieParser from "cookie-parser";
+
 dotenv.config();
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: "http://localhost:3000",
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.use(cookieParser());
+
+console.log(cors(corsOptions));
+
+app.get("/checkAuth", (req, res) => {
+  const token = req.cookies.token;
+  // const tokenMatch = setCookieHeader.match(/token=([^;]+)/);
+  console.log(token);
+
+  // if (tokenMatch) {
+  //   res.json({ message: "You are authorized" });
+  // } else {
+  //   res.status(401).json({ message: "Unauthorized" });
+  // }
+});
 
 const UserType = new GraphQLObjectType({
   name: "User",
@@ -45,24 +65,30 @@ const ChatsType = new GraphQLObjectType({
   description: "Returns chats",
   fields: () => ({
     withWho: {
-      type: new GraphQLList(new GraphQLObjectType({
-        name: "withWho",
-        fields: () => ({
-          friendUname: { type: new GraphQLNonNull(GraphQLString) },
-          messages: {
-            type: new GraphQLList(new GraphQLNonNull(new GraphQLObjectType({
-              name: "message",
-              fields: () => ({
-                createdBy: { type: new GraphQLNonNull(GraphQLString) },
-                createdAt: { type: new GraphQLNonNull(GraphQLString) },
-                message: { type: new GraphQLNonNull(GraphQLString) },
-                messageId: { type: new GraphQLNonNull(GraphQLString) }
-              })
-            })))
-          }
+      type: new GraphQLList(
+        new GraphQLObjectType({
+          name: "withWho",
+          fields: () => ({
+            friendUname: { type: new GraphQLNonNull(GraphQLString) },
+            messages: {
+              type: new GraphQLList(
+                new GraphQLNonNull(
+                  new GraphQLObjectType({
+                    name: "message",
+                    fields: () => ({
+                      createdBy: { type: new GraphQLNonNull(GraphQLString) },
+                      createdAt: { type: new GraphQLNonNull(GraphQLString) },
+                      message: { type: new GraphQLNonNull(GraphQLString) },
+                      messageId: { type: new GraphQLNonNull(GraphQLString) },
+                    }),
+                  })
+                )
+              ),
+            },
+          }),
         })
-      }))
-    }
+      ),
+    },
   }),
 });
 

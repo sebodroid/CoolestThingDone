@@ -14,7 +14,7 @@ const Topbar = () => {
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
       <Box display="flex">
-        <Link to="/login">
+        <Link to="/">
           <img style={{ height: "40px" }} src={Logo} alt="Kebo Logo" />
         </Link>
       </Box>

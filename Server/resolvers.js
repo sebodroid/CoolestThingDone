@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { User } from "./models.js";
 import jwt from "jsonwebtoken";
+import { serialize } from "cookie";
 
 const resolvers = {
   Mutation: {
@@ -33,7 +34,7 @@ const resolvers = {
   },
 
   Query: {
-    async loginUser(_, { input }) {
+    async loginUser(_, { input }, { res }) {
       const { email, pwd } = input;
       // Check if user with email exists
       const user = await User.findOne({ email });
@@ -47,13 +48,20 @@ const resolvers = {
         throw new Error("Incorrect password");
       }
 
-      const token = jwt.sign({}, process.env.JWT_SECRET, {
+      const token = jwt.sign({ userID: user._id }, process.env.JWT_SECRET, {
         expiresIn: "1h",
       });
 
-      console.log("Token:", token);
+      res.setHeader(
+        "Set-Cookie",
+        serialize("token", token, {
+          httpOnly: true,
+          maxAge: 3600,
+          path: "/",
+        })
+      );
 
-      return { email: user.email, pwd: user.pwd, token };
+      return { email: user.email, pwd: user.pwd };
     },
   },
 };
