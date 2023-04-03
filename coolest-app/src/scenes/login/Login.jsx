@@ -56,7 +56,7 @@ const Login = () => {
     onCompleted: (data) => {
       // handle the successful response here
       localStorage.setItem("token", data.loginUser.token);
-      window.location.href = "/"; // Redirect to home route
+      window.location.href = "/chat"; // Redirect to chat route
     },
     onError: (err) => {
       // handle the error here
@@ -104,7 +104,7 @@ const Login = () => {
         console.log(res.data.name);
 
         localStorage.setItem("token", response.access_token);
-        window.location.href = "/"; // Redirect to home route
+        window.location.href = "/chat"; // Redirect to chat route
       } catch (err) {
         console.log(err);
       }
