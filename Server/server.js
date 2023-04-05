@@ -29,18 +29,6 @@ app.use(cookieParser());
 
 console.log(cors(corsOptions));
 
-app.get("/checkAuth", (req, res) => {
-  const token = req.cookies.token;
-  // const tokenMatch = setCookieHeader.match(/token=([^;]+)/);
-  console.log(token);
-
-  // if (tokenMatch) {
-  //   res.json({ message: "You are authorized" });
-  // } else {
-  //   res.status(401).json({ message: "Unauthorized" });
-  // }
-});
-
 const UserType = new GraphQLObjectType({
   name: "User",
   description: "return user",
