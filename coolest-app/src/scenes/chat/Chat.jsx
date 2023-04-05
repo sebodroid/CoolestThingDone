@@ -1,31 +1,25 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { List, ListItem, ListItemText, Typography } from "@mui/material";
 import { gql, useLazyQuery } from "@apollo/client";
-import { useJwt, decodeToken } from "react-jwt";
+import { decodeToken } from "react-jwt";
 
 const Chat = () => {
-
-const [error, setError] = useState("");
+  const [error, setError] = useState("");
 
   //Decode token and grabUsername
-  const decodedToken = decodeToken(localStorage.getItem("token")); 
+  const decodedToken = decodeToken(localStorage.getItem("token"));
 
   const GET_MESSAGES = gql`
-  query MsgBoardd($input: userName!) 
-    {
-      msgBoard(input: $input) 
-      {
-        userName,
-        chats
-        {
-          withWho
-          {
-            friendUname,
-            messages
-            {
-              createdBy,
-              createdAt,
-              message,
+    query MsgBoardd($input: userName!) {
+      msgBoard(input: $input) {
+        userName
+        chats {
+          withWho {
+            friendUname
+            messages {
+              createdBy
+              createdAt
+              message
               messageId
             }
           }
@@ -53,17 +47,14 @@ const [error, setError] = useState("");
           },
         },
       }).then((e) => e.error && setError(e));
-
     } catch (error) {
       console.log(error);
     }
   };
 
-  useEffect(()=>{
-		getMessages();
-	}, [])
-
-
+  useEffect(() => {
+    getMessages();
+  }, []);
 
   return (
     <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
