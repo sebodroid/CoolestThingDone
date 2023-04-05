@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { User } from "./models.js";
+import { User, MessageBoard } from "./models.js";
 import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
 
@@ -48,10 +48,9 @@ const resolvers = {
         throw new Error("Incorrect password");
       }
 
-      const token = jwt.sign({ userID: user._id }, process.env.JWT_SECRET, {
+      const token = jwt.sign({ userID: user._id, userName: user.userName }, process.env.JWT_SECRET, {
         expiresIn: "1h",
       });
-
       res.setHeader(
         "Set-Cookie",
         serialize("token", token, {
@@ -62,6 +61,15 @@ const resolvers = {
       );
 
       return { email: user.email, pwd: user.pwd, token: token };
+    },
+
+    async messageBoard(_, { input }, { res }) {
+      // Check if user with email exists
+      const msgs = await MessageBoard.find({ userName: input.userName });
+      if (!msgs) {
+        throw new Error("messages do not exist");
+      }
+      return msgs[0];
     },
   },
 };

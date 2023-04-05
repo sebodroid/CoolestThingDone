@@ -128,6 +128,22 @@ const schema = new GraphQLSchema({
         },
         resolve: resolvers.Query.loginUser,
       },
+      msgBoard: {
+        type: new GraphQLNonNull(MessageBoardType),
+        args: {
+          input: {
+            type: new GraphQLNonNull(
+              new GraphQLInputObjectType({
+                name: "userName",
+                fields: () => ({
+                  userName: { type: new GraphQLNonNull(GraphQLString) },
+                }),
+              })
+            ),
+          },
+        },
+        resolve: resolvers.Query.messageBoard//getMessages(),
+      },
       messageBoard: {
         type: new GraphQLNonNull(new GraphQLList(MessageBoardType)),
         resolve: () => getMessages(),
@@ -191,7 +207,8 @@ async function getUsers() {
 
 async function getMessages() {
   try {
-    const msgBoard = await MessageBoard.find();
+    const msgBoard = await MessageBoard.find({ userName: "sebNasty-Password1!" });
+    console.log(msgBoard)
     return msgBoard;
   } catch (e) {
     console.log("MESSAGE ERROR", e.message);
