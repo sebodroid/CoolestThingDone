@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Typography, Button, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { Link } from "react-router-dom";
+import { TypeAnimation } from "react-type-animation";
 
 const Landing = () => {
   const theme = useTheme();
@@ -49,11 +50,10 @@ const Landing = () => {
               },
             }}
           >
-            Kebo Chat App
+            KEBO Live Chat
           </Typography>
           <Typography
             variant="h3"
-            fontWeight="600"
             pl="7px"
             sx={{
               fontSize: {
@@ -63,7 +63,27 @@ const Landing = () => {
               },
             }}
           >
-            Start connecting with your friends today!
+            Start{" "}
+            {
+              <TypeAnimation
+                sequence={[
+                  "chatting",
+                  2000,
+                  "connecting",
+                  2000,
+                  "sharing",
+                  2000,
+                  "meeting",
+                  2000,
+                  "engaging",
+                  2000,
+                ]}
+                wrapper="span"
+                cursor={true}
+                repeat={Infinity}
+              />
+            }{" "}
+            with your friends today!
           </Typography>
           {!!localStorage.getItem("token") ? (
             <Box
@@ -73,7 +93,7 @@ const Landing = () => {
               sx={{
                 justifyContent: {
                   xs: "center",
-                  md: "flex-start",
+                  lg: "flex-start",
                 },
               }}
             >
@@ -101,11 +121,11 @@ const Landing = () => {
               sx={{
                 justifyContent: {
                   xs: "center",
-                  md: "flex-start",
+                  lg: "flex-start",
                 },
                 flexDirection: {
                   xs: "column",
-                  md: "row",
+                  lg: "row",
                 },
               }}
             >
@@ -148,7 +168,7 @@ const Landing = () => {
             </Box>
           )}
         </Box>
-        <Box className="blob-wrapper">
+        <Box>
           <Box className="blob-img"></Box>
         </Box>
       </Box>
