@@ -3,7 +3,6 @@ import { List, ListItem, ListItemText, Typography, Box } from "@mui/material";
 import { gql, useLazyQuery } from "@apollo/client";
 import { decodeToken } from "react-jwt";
 import Sidebar from "../../components/Sidebar";
-import robot from "../../assets/robot.jpg";
 
 const Chat = () => {
   const [error, setError] = useState("");
@@ -60,7 +59,7 @@ const Chat = () => {
 
   return (
     <Box display="flex">
-      <Sidebar img={robot} username="Billy Bob Joe" />
+      <Sidebar />
       <List
         sx={{
           width: "100%",

@@ -4,11 +4,30 @@ import { tokens } from "../theme";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import Profile from "./Profile";
+import robot from "../assets/robot.jpg";
+import pfp from "../assets/pfp-placeholder.jpg";
+import kebo from "../assets/logo-color.png";
 
-const Sidebar = (props) => {
+const Sidebar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [collapsed, setCollapsed] = useState(false);
+
+  //   For Testing Purposes
+  const profileData = [
+    {
+      img: robot,
+      username: "Billy Bob Joe",
+    },
+    {
+      img: pfp,
+      username: "Mr. Savage",
+    },
+    {
+      img: kebo,
+      username: "Lil Peep",
+    },
+  ];
 
   const handleCollapse = () => {
     setCollapsed(!collapsed);
@@ -23,11 +42,15 @@ const Sidebar = (props) => {
       position="relative"
     >
       {/* Example of how we could utilize props for sidebar */}
-      <Profile
-        img={props.img}
-        username={props.username}
-        collapsed={collapsed}
-      />
+      {profileData.map((item) => {
+        return (
+          <Profile
+            img={item.img}
+            username={item.username}
+            collapsed={collapsed}
+          />
+        );
+      })}
 
       {/* Collapse and uncollapse sidebar */}
       {/* On collapse, text should be hidden */}
