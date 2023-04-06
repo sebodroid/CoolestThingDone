@@ -67,6 +67,7 @@ const Landing = () => {
             {
               <TypeAnimation
                 sequence={[
+                  1000,
                   "chatting",
                   2000,
                   "connecting",
