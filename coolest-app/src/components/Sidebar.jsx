@@ -3,6 +3,7 @@ import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../theme";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
+import Profile from "./Profile";
 
 const Sidebar = (props) => {
   const theme = useTheme();
@@ -22,23 +23,11 @@ const Sidebar = (props) => {
       position="relative"
     >
       {/* Example of how we could utilize props for sidebar */}
-      <Box display="flex" flexDirection="column" gap="10px">
-        <img
-          src={props.img}
-          alt="User PFP"
-          style={{
-            height: "80px",
-            width: "80px",
-            borderRadius: "50%",
-            marginInline: "auto",
-          }}
-        />
-        {!collapsed && (
-          <Typography variant="h6" textAlign="center">
-            {props.username}
-          </Typography>
-        )}
-      </Box>
+      <Profile
+        img={props.img}
+        username={props.username}
+        collapsed={collapsed}
+      />
 
       {/* Collapse and uncollapse sidebar */}
       {/* On collapse, text should be hidden */}
