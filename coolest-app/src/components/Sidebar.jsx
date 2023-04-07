@@ -75,16 +75,28 @@ const Sidebar = () => {
         </Box>
       )}
       {/* Example of how we could utilize props for sidebar */}
-
-      {filteredProfileData.length === 0 ? (
-        <Typography variant="h5" textAlign="center">
-          User Not Found
-        </Typography>
+      {!collapsed ? (
+        filteredProfileData.length === 0 ? (
+          <Typography variant="h5" textAlign="center">
+            "User Not Found"
+          </Typography>
+        ) : (
+          filteredProfileData.map((item) => {
+            return (
+              <Profile
+                key={item.username}
+                img={item.img}
+                username={item.username}
+                message={item.message}
+                collapsed={collapsed}
+              />
+            );
+          })
+        )
       ) : (
-        filteredProfileData.map((item) => {
+        profileData.map((item) => {
           return (
             <Profile
-              key={item.username}
               img={item.img}
               username={item.username}
               message={item.message}
