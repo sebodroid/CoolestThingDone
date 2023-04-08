@@ -6,7 +6,7 @@ import Sidebar from "../../components/Sidebar";
 
 const Chat = () => {
   const [error, setError] = useState("");
-
+  const [messages, setMessages] = useState({})
   //Decode token and grabUsername
   const decodedToken = decodeToken(localStorage.getItem("token"));
 
@@ -32,6 +32,7 @@ const Chat = () => {
   const [userMessages] = useLazyQuery(GET_MESSAGES, {
     onCompleted: (data) => {
       // handle the successful response here
+      return data.msgBoard
     },
     onError: (err) => {
       // handle the error here
@@ -40,6 +41,7 @@ const Chat = () => {
   });
 
   const getMessages = async () => {
+    let msg = {}
     try {
       await userMessages({
         variables: {
@@ -47,15 +49,21 @@ const Chat = () => {
             userName: decodedToken.userName,
           },
         },
-      }).then((e) => e.error && setError(e));
+      }).then((e) => {
+        msg = e.data.msgBoard
+      });
     } catch (error) {
       console.log(error);
     }
+    return msg
   };
 
   useEffect(() => {
-    getMessages();
-  }, []);
+    getMessages().then((e) => setMessages(e))
+
+  }, [messages]);
+
+  if (Object.keys(messages).length === 0) return <div>Loading...</div>;
 
   return (
     <Box display="flex">
@@ -68,60 +76,26 @@ const Chat = () => {
           height: "fit-content",
         }}
       >
-        <ListItem alignItems="flex-start">
-          <ListItemText
-            primary="UserName"
+      {messages.chats.withWho[0].messages.map((chat, index) => 
+        <ListItem key={index} alignItems="flex-start">
+            <ListItemText
+            primary={chat.createdBy}
             secondary={
-              <React.Fragment>
-                <Typography
-                  sx={{ display: "inline" }}
-                  component="span"
-                  variant="body2"
-                  color="text.primary"
-                >
-                  Who sent the message
-                </Typography>
-                {": Hey how are you, this is the latest message"}
-              </React.Fragment>
-            }
-          />
-        </ListItem>
-        <ListItem alignItems="flex-start">
-          <ListItemText
-            primary="UserName"
-            secondary={
-              <React.Fragment>
-                <Typography
-                  sx={{ display: "inline" }}
-                  component="span"
-                  variant="body2"
-                  color="text.primary"
-                >
-                  Who sent the message
-                </Typography>
-                {": Hey how are you, this is the latest message"}
-              </React.Fragment>
-            }
-          />
-        </ListItem>
-        <ListItem alignItems="flex-start">
-          <ListItemText
-            primary="UserName"
-            secondary={
-              <React.Fragment>
-                <Typography
-                  sx={{ display: "inline" }}
-                  component="span"
-                  variant="body2"
-                  color="text.primary"
-                >
-                  Who sent the message
-                </Typography>
-                {": Hey how are you, this is the latest message"}
-              </React.Fragment>
-            }
-          />
-        </ListItem>
+            <React.Fragment>
+              <Typography
+                sx={{ display: "inline" }}
+                component="span"
+                variant="body2"
+                color="text.primary"
+              >
+              </Typography>
+              {chat.message}
+            </React.Fragment>
+          }
+        />
+        
+      </ListItem>
+      )}
       </List>
     </Box>
   );
