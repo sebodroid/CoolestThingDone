@@ -60,25 +60,36 @@ const ChatsType = new GraphQLObjectType({
           fields: () => ({
             friendUname: { type: new GraphQLNonNull(GraphQLString) },
             messages: {
-              type: new GraphQLList(
-                new GraphQLNonNull(
-                  new GraphQLObjectType({
-                    name: "message",
-                    fields: () => ({
-                      createdBy: { type: new GraphQLNonNull(GraphQLString) },
-                      createdAt: { type: new GraphQLNonNull(GraphQLString) },
-                      message: { type: new GraphQLNonNull(GraphQLString) },
-                      messageId: { type: new GraphQLNonNull(GraphQLString) },
-                    }),
-                  })
-                )
-              ),
+              type: MessageType
+              // new GraphQLList(
+              //   new GraphQLNonNull(
+              //     new GraphQLObjectType({
+              //       name: "message",
+              //       fields: () => ({
+              //         createdBy: { type: new GraphQLNonNull(GraphQLString) },
+              //         createdAt: { type: new GraphQLNonNull(GraphQLString) },
+              //         message: { type: new GraphQLNonNull(GraphQLString) },
+              //         messageId: { type: new GraphQLNonNull(GraphQLString) },
+              //       }),
+              //     })
+              //   )
+              // ),
             },
           }),
         })
       ),
     },
   }),
+});
+
+const MessageType = new GraphQLObjectType({
+  name: "Message",
+  description: "Create a new message",
+  fields: () => ({
+      createdBy: { type: new GraphQLNonNull(GraphQLString) },
+      createdAt: { type: new GraphQLNonNull(GraphQLString) },
+      message: { type: new GraphQLNonNull(GraphQLString) },
+    }),
 });
 
 const MessageBoardType = new GraphQLObjectType({
@@ -159,6 +170,24 @@ const schema = new GraphQLSchema({
         },
         resolve: resolvers.Mutation.registerUser,
       },
+      createMessage: {
+        type: MessageType,
+        args: {
+          input: {
+            type: new GraphQLNonNull(
+              new GraphQLInputObjectType({
+                name: "MessageInput",
+                fields: () => ({
+                  createdBy: { type: new GraphQLNonNull(GraphQLString) },
+                  createdAt: { type: new GraphQLNonNull(GraphQLString) },
+                  message: { type: new GraphQLNonNull(GraphQLString) },
+                }),
+              })
+            ),
+          },
+        },
+        resolve: resolvers.Mutation.createMessage/*() => createMessage(),*/
+      }
     },
   }),
 });
@@ -203,15 +232,16 @@ async function getMessages() {
   }
 }
 
-//run();
-
-// async function run() { //Function to create a new DB user
-//   try {
-//     const user = new User({ userName: "user106", email: "user105@hotmail.com", pwd: "password" });
-//     await user.save();
-//     // const user = await User.find({ userName: "testUser101" })
-//     console.log("\n\n", user, "\n\n");
-//   } catch (e) {
-//     console.log("\n\n", e.message, "\n\n")
-//   }
-// }
+async function createMessage(){
+  try{
+    const message = await MessageBoard.updateOne({ userName: "testUser101" }, 
+    { $push: { "chats.withWho.1.messages": 
+    { "createdBy": "testUser101", "createdAt": "1679621208", "message": "Testing with server"} 
+    } 
+    },
+    { upsert: true}) 
+       return "message Created";
+  }catch(e){
+    console.log("Error creating message: ", e)
+  }
+}

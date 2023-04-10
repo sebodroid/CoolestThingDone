@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { List, ListItem, ListItemText, Typography, Box } from "@mui/material";
-import { gql, useLazyQuery } from "@apollo/client";
+import { List, ListItem, ListItemText, Typography, Box, TextField, Button} from "@mui/material";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { decodeToken } from "react-jwt";
+import mongoose from "mongoose";
 import Sidebar from "../../components/Sidebar";
 
 const Chat = () => {
   const [error, setError] = useState("");
-  const [messages, setMessages] = useState({})
+  const [messages, setMessages] = useState({});
+  const [inputMessage, setInputMessage] = useState("");
+
+  const handleChange = (e) => {
+    setInputMessage(e.target.value);
+  }
+
   //Decode token and grabUsername
   const decodedToken = decodeToken(localStorage.getItem("token"));
 
@@ -28,6 +35,42 @@ const Chat = () => {
       }
     }
   `;
+
+  const SEND_MESSAGE = gql `
+  mutation CreateMessage($input: MessageInput!){
+    createMessage(input: $input){
+      createdBy
+      createdAt
+      message
+    }
+  }
+  `
+  const [createMessage] = useMutation(SEND_MESSAGE);
+
+  function createDateTime(){
+    let date = new Date();
+
+    let dateTime = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear() + ":" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+    return dateTime.toString()
+  }
+
+  const handleSubmit = async (values) => {
+    let date = new Date()
+    try {
+      const { data } = await createMessage({
+        variables: {
+          input: {
+            createdBy: decodedToken.userName,
+            createdAt: createDateTime(),
+            message: inputMessage,
+          },
+        },
+      });
+      console.log("Meassage created on handleSubmit")
+    } catch (error) {
+      //setError(error.graphQLErrors[0].message);
+      console.log("Error on handle submit when creating message", error)
+    }  }
 
   const [userMessages] = useLazyQuery(GET_MESSAGES, {
     onCompleted: (data) => {
@@ -66,6 +109,7 @@ const Chat = () => {
   if (Object.keys(messages).length === 0) return <div>Loading...</div>;
 
   return (
+    <div>
     <Box display="flex">
       <Sidebar />
       <List
@@ -97,7 +141,15 @@ const Chat = () => {
       </ListItem>
       )}
       </List>
+
+      <TextField id="outlined-basic" label="Outlined" variant="outlined" 
+      onChange={handleChange}
+      />
+    <Button onClick={handleSubmit} variant="contained">send</Button>
+
     </Box>
+      
+    </div>
   );
 };
 

@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { User, MessageBoard } from "./models.js";
 import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
+import mongoose from "mongoose";
 
 const resolvers = {
   Mutation: {
@@ -31,6 +32,24 @@ const resolvers = {
         pwd: user.pwd,
       };
     },
+
+    async createMessage(_, {input}){
+      const {createdBy, createdAt, message} = input;
+      console.log("Resolvers messageBoard being hit")
+      const newMessage = await MessageBoard.updateOne({ userName: createdBy }, 
+    { $push: { "chats.withWho.1.messages": 
+    { "createdBy": createdBy, "createdAt": createdAt, "message": message, /*messageId: new mongoose.Types.ObjectId()*/} 
+    } 
+    },
+    { upsert: true}) 
+    return {
+      createdBy: createdBy,
+      createdAt: createdAt,
+      message: message,
+    }
+
+    }
+
   },
 
   Query: {
@@ -63,7 +82,7 @@ const resolvers = {
       return { email: user.email, pwd: user.pwd, token: token };
     },
 
-    async messageBoard(_, { input }, { res }) {
+    async messageBoard(_, { input }) {
       // Check if user with email exists
       const msgs = await MessageBoard.find({ userName: input.userName });
       if (!msgs) {
