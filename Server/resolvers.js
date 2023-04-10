@@ -38,7 +38,7 @@ const resolvers = {
       console.log("Resolvers messageBoard being hit")
       const newMessage = await MessageBoard.updateOne({ userName: createdBy }, 
     { $push: { "chats.withWho.1.messages": 
-    { "createdBy": createdBy, "createdAt": createdAt, "message": message, /*messageId: new mongoose.Types.ObjectId()*/} 
+    { "createdBy": createdBy, "createdAt": createdAt, "message": message, messageId: new mongoose.Types.ObjectId()} 
     } 
     },
     { upsert: true}) 

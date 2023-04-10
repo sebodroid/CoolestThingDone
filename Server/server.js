@@ -60,20 +60,20 @@ const ChatsType = new GraphQLObjectType({
           fields: () => ({
             friendUname: { type: new GraphQLNonNull(GraphQLString) },
             messages: {
-              type: MessageType
-              // new GraphQLList(
-              //   new GraphQLNonNull(
-              //     new GraphQLObjectType({
-              //       name: "message",
-              //       fields: () => ({
-              //         createdBy: { type: new GraphQLNonNull(GraphQLString) },
-              //         createdAt: { type: new GraphQLNonNull(GraphQLString) },
-              //         message: { type: new GraphQLNonNull(GraphQLString) },
-              //         messageId: { type: new GraphQLNonNull(GraphQLString) },
-              //       }),
-              //     })
-              //   )
-              // ),
+              type: 
+              new GraphQLList(
+                new GraphQLNonNull(
+                  new GraphQLObjectType({
+                    name: "message",
+                    fields: () => ({
+                      createdBy: { type: new GraphQLNonNull(GraphQLString) },
+                      createdAt: { type: new GraphQLNonNull(GraphQLString) },
+                      message: { type: new GraphQLNonNull(GraphQLString) },
+                      messageId: { type: new GraphQLNonNull(GraphQLString) },
+                    }),
+                  })
+                )
+              ),
             },
           }),
         })

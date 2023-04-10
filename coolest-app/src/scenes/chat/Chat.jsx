@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import { List, ListItem, ListItemText, Typography, Box, TextField, Button} from "@mui/material";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { decodeToken } from "react-jwt";
-import mongoose from "mongoose";
 import Sidebar from "../../components/Sidebar";
 
 const Chat = () => {
   const [error, setError] = useState("");
-  const [messages, setMessages] = useState({});
+  // const [messages, setMessages] = useState({});
   const [inputMessage, setInputMessage] = useState("");
 
   const handleChange = (e) => {
@@ -17,24 +16,24 @@ const Chat = () => {
   //Decode token and grabUsername
   const decodedToken = decodeToken(localStorage.getItem("token"));
 
-  const GET_MESSAGES = gql`
-    query MsgBoardd($input: userName!) {
-      msgBoard(input: $input) {
-        userName
-        chats {
-          withWho {
-            friendUname
-            messages {
-              createdBy
-              createdAt
-              message
-              messageId
-            }
-          }
-        }
-      }
-    }
-  `;
+  // const GET_MESSAGES = gql`
+  //   query MsgBoardd($input: userName!) {
+  //     msgBoard(input: $input) {
+  //       userName
+  //       chats {
+  //         withWho {
+  //           friendUname
+  //           messages {
+  //             createdBy
+  //             createdAt
+  //             message
+  //             messageId
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // `;
 
   const SEND_MESSAGE = gql `
   mutation CreateMessage($input: MessageInput!){
@@ -47,6 +46,7 @@ const Chat = () => {
   `
   const [createMessage] = useMutation(SEND_MESSAGE);
 
+  //Function to add current date when user sends new msg
   function createDateTime(){
     let date = new Date();
 
@@ -55,9 +55,8 @@ const Chat = () => {
   }
 
   const handleSubmit = async (values) => {
-    let date = new Date()
     try {
-      const { data } = await createMessage({
+      await createMessage({
         variables: {
           input: {
             createdBy: decodedToken.userName,
@@ -72,41 +71,41 @@ const Chat = () => {
       console.log("Error on handle submit when creating message", error)
     }  }
 
-  const [userMessages] = useLazyQuery(GET_MESSAGES, {
-    onCompleted: (data) => {
-      // handle the successful response here
-      return data.msgBoard
-    },
-    onError: (err) => {
-      // handle the error here
-      console.log("ERROR: ", err);
-    },
-  });
+  // const [userMessages] = useLazyQuery(GET_MESSAGES, {
+  //   onCompleted: (data) => {
+  //     // handle the successful response here
+  //     return data.msgBoard
+  //   },
+  //   onError: (err) => {
+  //     // handle the error here
+  //     console.log("ERROR: ", err);
+  //   },
+  // });
 
-  const getMessages = async () => {
-    let msg = {}
-    try {
-      await userMessages({
-        variables: {
-          input: {
-            userName: decodedToken.userName,
-          },
-        },
-      }).then((e) => {
-        msg = e.data.msgBoard
-      });
-    } catch (error) {
-      console.log(error);
-    }
-    return msg
-  };
+  // const getMessages = async () => {
+  //   let msg = {}
+  //   try {
+  //     await userMessages({
+  //       variables: {
+  //         input: {
+  //           userName: decodedToken.userName,
+  //         },
+  //       },
+  //     }).then((e) => {
+  //       msg = e.data.msgBoard
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  //   return msg
+  // };
 
-  useEffect(() => {
-    getMessages().then((e) => setMessages(e))
+  // useEffect(() => {
+  //   getMessages().then((e) => setMessages(e))
 
-  }, [messages]);
+  // }, [messages]);
 
-  if (Object.keys(messages).length === 0) return <div>Loading...</div>;
+  // if (Object.keys(messages).length === 0) return <div>Loading...</div>;
 
   return (
     <div>
@@ -120,7 +119,7 @@ const Chat = () => {
           height: "fit-content",
         }}
       >
-      {messages.chats.withWho[0].messages.map((chat, index) => 
+      {/* {messages.chats.withWho[0].messages.map((chat, index) => 
         <ListItem key={index} alignItems="flex-start">
             <ListItemText
             primary={chat.createdBy}
@@ -139,7 +138,7 @@ const Chat = () => {
         />
         
       </ListItem>
-      )}
+      )} */}
       </List>
 
       <TextField id="outlined-basic" label="Outlined" variant="outlined" 
