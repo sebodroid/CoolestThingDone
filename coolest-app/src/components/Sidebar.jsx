@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   IconButton,
@@ -10,6 +10,7 @@ import { tokens } from "../theme";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import SearchIcon from "@mui/icons-material/Search";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Profile from "./Profile";
 import robot from "../assets/robot.jpg";
 // import pfp from "../assets/pfp-placeholder.jpg";
@@ -50,52 +51,60 @@ const Sidebar = () => {
 
   const [messages, setMessages] = useState({});
 
+  const [error, setError] = useState(false);
+
   const [userMessages] = useLazyQuery(GET_MESSAGES, {
     onCompleted: (data) => {
-      // handle the successful response here
-      return data.msgBoard
+      return data.msgBoard;
     },
     onError: (err) => {
-      // handle the error here
-      console.log("ERROR: ", err);
+      console.log("Error fetching user messages:", err);
     },
   });
 
   const getMessages = async () => {
-    let msg = {}
     try {
-      await userMessages({
+      const result = await userMessages({
         variables: {
           input: {
             userName: decodedToken.userName,
           },
         },
-      }).then((e) => {
-        msg = e.data.msgBoard
       });
+      return result.data.msgBoard || {};
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching user messages:", error);
+      return {};
     }
-    return msg
   };
 
   function setProfiles(messageChats) {
-    let profiles = [];
-    messageChats.chats.withWho.map((user, index) => {
-      profiles[index] = {img: robot, username: user.friendUname, message: user.messages[user.messages.length - 1].message}
-    });
-    setProfileData(profiles)
+    if (
+      !messageChats ||
+      !messageChats.chats ||
+      messageChats.chats.withWho.length === 0
+    ) {
+      return;
+    }
+
+    let profiles = messageChats.chats.withWho.map((user, index) => ({
+      img: robot,
+      username: user.friendUname,
+      message: user.messages[user.messages.length - 1].message,
+    }));
+
+    setProfileData(profiles);
   }
 
   useEffect(() => {
-    getMessages().then((e) => setMessages(e))
-    
-    //This breaks at the moment, will fix later
-    if(Object.keys(messages).length !== 0){
-      // console.log("Messages", messages.chats.withWho)
-      setProfiles(messages);
-    }
-  }, [messages]);
+    getMessages().then((e) => {
+      setMessages(e);
+
+      if (Object.keys(e).length !== 0) {
+        setProfiles(e);
+      }
+    });
+  }, []);
 
   const filteredProfileData = profileData.filter(
     (item) =>
@@ -131,11 +140,27 @@ const Sidebar = () => {
           </IconButton>
         </Box>
       )}
+      <Box
+        width="fit-content"
+        marginInline="auto"
+        p="5px"
+        borderBottom="1px solid #fff"
+        mb="10px"
+      >
+        {!collapsed && "Start new chat "}
+        <IconButton>
+          {!collapsed ? (
+            <PersonAddIcon sx={{ fontSize: "20px" }} />
+          ) : (
+            <PersonAddIcon sx={{ fontSize: "25px" }} />
+          )}
+        </IconButton>
+      </Box>
       {/* Example of how we could utilize props for sidebar */}
       {!collapsed ? (
         filteredProfileData.length === 0 ? (
           <Typography variant="h5" textAlign="center">
-            "User Not Found"
+            "No Chats Found"
           </Typography>
         ) : (
           filteredProfileData.map((item) => {
