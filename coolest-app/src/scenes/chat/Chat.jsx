@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { List, ListItem, ListItemText, Typography, Box, TextField, Button} from "@mui/material";
+import {
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+  Box,
+  TextField,
+  Button,
+} from "@mui/material";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { decodeToken } from "react-jwt";
 import Sidebar from "../../components/Sidebar";
+import SentMessage from "../../components/SentMessage";
+import ReceivedMessage from "../../components/ReceivedMessage";
 
 const Chat = () => {
   const [error, setError] = useState("");
@@ -11,7 +21,7 @@ const Chat = () => {
 
   const handleChange = (e) => {
     setInputMessage(e.target.value);
-  }
+  };
 
   //Decode token and grabUsername
   const decodedToken = decodeToken(localStorage.getItem("token"));
@@ -35,23 +45,35 @@ const Chat = () => {
   //   }
   // `;
 
-  const SEND_MESSAGE = gql `
-  mutation CreateMessage($input: MessageInput!){
-    createMessage(input: $input){
-      createdBy
-      createdAt
-      message
+  const SEND_MESSAGE = gql`
+    mutation CreateMessage($input: MessageInput!) {
+      createMessage(input: $input) {
+        createdBy
+        createdAt
+        message
+      }
     }
-  }
-  `
+  `;
   const [createMessage] = useMutation(SEND_MESSAGE);
 
   //Function to add current date when user sends new msg
-  function createDateTime(){
+  function createDateTime() {
     let date = new Date();
 
-    let dateTime = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear() + ":" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
-    return dateTime.toString()
+    let dateTime =
+      date.getMonth() +
+      1 +
+      "/" +
+      date.getDate() +
+      "/" +
+      date.getFullYear() +
+      ":" +
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      ":" +
+      date.getSeconds();
+    return dateTime.toString();
   }
 
   const handleSubmit = async (values) => {
@@ -61,15 +83,18 @@ const Chat = () => {
           input: {
             createdBy: decodedToken.userName,
             createdAt: createDateTime(),
-            message: inputMessage,
+            message: inputMessage !== "" && inputMessage,
           },
         },
       });
-      console.log("Meassage created on handleSubmit")
+      console.log("Message created on handleSubmit");
     } catch (error) {
       //setError(error.graphQLErrors[0].message);
-      console.log("Error on handle submit when creating message", error)
-    }  }
+      console.log(
+        "Error caught when sending message: Message cannot be empty."
+      );
+    }
+  };
 
   // const [userMessages] = useLazyQuery(GET_MESSAGES, {
   //   onCompleted: (data) => {
@@ -109,17 +134,17 @@ const Chat = () => {
 
   return (
     <div>
-    <Box display="flex">
-      <Sidebar />
-      <List
-        sx={{
-          width: "100%",
-          maxWidth: 360,
-          bgcolor: "background.paper",
-          height: "fit-content",
-        }}
-      >
-      {/* {messages.chats.withWho[0].messages.map((chat, index) => 
+      <Box display="flex">
+        <Sidebar />
+        <List
+          sx={{
+            width: "100%",
+            maxWidth: 360,
+            bgcolor: "background.paper",
+            height: "fit-content",
+          }}
+        >
+          {/* {messages.chats.withWho[0].messages.map((chat, index) => 
         <ListItem key={index} alignItems="flex-start">
             <ListItemText
             primary={chat.createdBy}
@@ -139,15 +164,20 @@ const Chat = () => {
         
       </ListItem>
       )} */}
-      </List>
+        </List>
 
-      <TextField id="outlined-basic" label="Outlined" variant="outlined" 
-      onChange={handleChange}
-      />
-    <Button onClick={handleSubmit} variant="contained">send</Button>
-
-    </Box>
-      
+        <TextField
+          id="outlined-basic"
+          label="Outlined"
+          variant="outlined"
+          onChange={handleChange}
+        />
+        <Button onClick={handleSubmit} variant="contained">
+          send
+        </Button>
+        <SentMessage message="Hello world" />
+        <ReceivedMessage message="Well hello there" />
+      </Box>
     </div>
   );
 };
