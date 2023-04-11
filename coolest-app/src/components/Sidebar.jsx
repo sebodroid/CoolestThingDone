@@ -12,8 +12,8 @@ import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import SearchIcon from "@mui/icons-material/Search";
 import Profile from "./Profile";
 import robot from "../assets/robot.jpg";
-import pfp from "../assets/pfp-placeholder.jpg";
-import kebo from "../assets/logo-color.png";
+// import pfp from "../assets/pfp-placeholder.jpg";
+// import kebo from "../assets/logo-color.png";
 
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { decodeToken } from "react-jwt";
@@ -81,8 +81,8 @@ const Sidebar = () => {
 
   function setProfiles(messageChats) {
     let profiles = [];
-    messageChats.map((user, index) => {
-      profiles[index] = {img: robot, userName: user.friendUname, message: user.messages[user.messages.length - 1]}
+    messageChats.chats.withWho.map((user, index) => {
+      profiles[index] = {img: robot, username: user.friendUname, message: user.messages[user.messages.length - 1].message}
     });
     setProfileData(profiles)
   }
@@ -91,30 +91,11 @@ const Sidebar = () => {
     getMessages().then((e) => setMessages(e))
     
     //This breaks at the moment, will fix later
-    //console.log("Messages", messages.chats.withWho)
-    //setProfiles(messages.chats.withWho);
-    console.log(profileData)
+    if(Object.keys(messages).length !== 0){
+      // console.log("Messages", messages.chats.withWho)
+      setProfiles(messages);
+    }
   }, [messages]);
-
-
-  //   For Testing Purposes
-  // const profileData = [
-  //   {
-  //     img: robot,
-  //     username: "Billy Bob Joe",
-  //     message: "Hey there bro",
-  //   },
-  //   {
-  //     img: pfp,
-  //     username: "Mr. Savage",
-  //     message: "You're such a Savage",
-  //   },
-  //   {
-  //     img: kebo,
-  //     username: "Lil Peep",
-  //     message: "I'm not dead mother fucker",
-  //   },
-  // ];
 
   const filteredProfileData = profileData.filter(
     (item) =>
