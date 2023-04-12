@@ -9,6 +9,7 @@ const SentMessage = (props) => {
     <Box
       backgroundColor={colors.blueAccent[500]}
       height="fit-content"
+      width="fit-content"
       p="10px"
       borderRadius="10px 0 10px 10px"
       color="#fff"

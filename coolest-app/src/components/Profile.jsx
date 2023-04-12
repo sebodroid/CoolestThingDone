@@ -8,7 +8,7 @@ const Profile = (props) => {
 
   const hover = {
     "&:hover": {
-      backgroundColor: `${colors.primary[900]}`,
+      backgroundColor: `${colors.primary[700]}`,
       cursor: "pointer",
     },
   };
@@ -35,12 +35,27 @@ const Profile = (props) => {
         <Box lineHeight="1.6">
           <Typography
             variant="h6"
-            maxWidth="100px"
+            maxWidth="120px"
             color={colors.blueAccent[500]}
+            sx={{
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+            }}
           >
             {props.username}
           </Typography>
-          <p style={{ fontSize: "12px" }}>{props.message}</p>
+          <p
+            style={{
+              fontSize: "12px",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              maxWidth: "120px",
+            }}
+          >
+            {props.message}
+          </p>
         </Box>
       )}
     </Box>

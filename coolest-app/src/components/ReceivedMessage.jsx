@@ -9,6 +9,7 @@ const ReceivedMessage = (props) => {
     <Box
       backgroundColor={colors.grey[400]}
       height="fit-content"
+      width="fit-content"
       p="10px"
       borderRadius="0 10px 10px 10px"
       color="#fff"

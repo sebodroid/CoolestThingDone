@@ -16,7 +16,7 @@ import robot from "../assets/robot.jpg";
 // import pfp from "../assets/pfp-placeholder.jpg";
 // import kebo from "../assets/logo-color.png";
 
-import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { gql, useLazyQuery } from "@apollo/client";
 import { decodeToken } from "react-jwt";
 
 const Sidebar = () => {
@@ -50,8 +50,6 @@ const Sidebar = () => {
   `;
 
   const [messages, setMessages] = useState({});
-
-  const [error, setError] = useState(false);
 
   const [userMessages] = useLazyQuery(GET_MESSAGES, {
     onCompleted: (data) => {
@@ -117,7 +115,7 @@ const Sidebar = () => {
 
   return (
     <Box
-      height={`calc(100vh - 78px)`}
+      height="100%"
       borderRight={`1px solid ${colors.greenAccent[800]}`}
       marginRight="20px"
       position="relative"
@@ -141,11 +139,12 @@ const Sidebar = () => {
         </Box>
       )}
       <Box
-        width="fit-content"
-        marginInline="auto"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
         p="5px"
         borderBottom="1px solid #fff"
-        mb="10px"
+        m="10px"
       >
         {!collapsed && "Start new chat "}
         <IconButton>
@@ -199,7 +198,7 @@ const Sidebar = () => {
           width: "100%",
           textAlign: "center",
           padding: "10px",
-          borderRadius: "0",
+          borderRadius: "0 0 0 10px",
         }}
       >
         {collapsed ? (
