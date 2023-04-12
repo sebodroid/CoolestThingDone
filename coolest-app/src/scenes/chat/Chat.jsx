@@ -55,7 +55,7 @@ const Chat = () => {
       <Box
         display="flex"
         height="80vh"
-        width="80%"
+        width="min(90%, 80rem)"
         backgroundColor={colors.grey[900]}
         borderRadius="10px"
         pt="20px"

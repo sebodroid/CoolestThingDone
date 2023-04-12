@@ -11,7 +11,7 @@ const SentMessage = (props) => {
       height="fit-content"
       width="fit-content"
       p="10px"
-      borderRadius="10px 0 10px 10px"
+      borderRadius="10px 10px 0 10px"
       color="#fff"
       m="10px"
     >

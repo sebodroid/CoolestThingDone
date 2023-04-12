@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ReceivedMessage from "./ReceivedMessage";
 import SentMessage from "./SentMessage";
 import { Box, TextField, Button, useTheme } from "@mui/material";
@@ -9,6 +9,9 @@ import { tokens } from "../theme";
 const MessageBoard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const messagesEndRef = useRef(null);
+
   const handleSubmit = async (values) => {
     try {
       await createMessage({
@@ -31,6 +34,11 @@ const MessageBoard = () => {
   };
 
   const [inputMessage, setInputMessage] = useState("");
+
+  useEffect(() => {
+    // Scroll to the bottom of the message board after rendering
+    messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+  }, []);
 
   const handleChange = (e) => {
     setInputMessage(e.target.value);
@@ -99,21 +107,26 @@ const MessageBoard = () => {
       paddingBottom="16px"
       position="relative"
     >
-      <Box flex="1 1 auto" overflowY="auto" padding="16px" position="relative">
+      <Box
+        flex="1 1 auto"
+        overflowY="auto"
+        padding="16px"
+        position="relative"
+        ref={messagesEndRef}
+        style={{ overflowY: "auto" }}
+      >
         <Box display="flex" flexDirection="column">
-          <Box alignSelf="flex-end">
+          <Box alignSelf="flex-end" maxWidth="50%" wordWrap="break-word">
             <SentMessage message="Hello world" />
           </Box>
-          <Box alignSelf="flex-start">
+          <Box alignSelf="flex-start" maxWidth="50%" wordWrap="break-word">
             <ReceivedMessage message="Well hello there" />
           </Box>
         </Box>
       </Box>
 
       <Box
-        position="absolute"
-        bottom="0"
-        left="0"
+        alignSelf="flex-end"
         padding="16px"
         display="flex"
         justifyContent="center"
