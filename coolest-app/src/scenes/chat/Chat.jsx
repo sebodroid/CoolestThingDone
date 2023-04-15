@@ -1,4 +1,4 @@
-import React from "react";
+import {React, useState} from "react";
 import { Box, useTheme } from "@mui/material";
 import Sidebar from "../../components/Sidebar";
 import MessageBoard from "../../components/MessageBoard";
@@ -6,43 +6,16 @@ import { tokens } from "../../theme";
 const Chat = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  // const [messages, setMessages] = useState({});
 
-  // const [userMessages] = useLazyQuery(GET_MESSAGES, {
-  //   onCompleted: (data) => {
-  //     // handle the successful response here
-  //     return data.msgBoard
-  //   },
-  //   onError: (err) => {
-  //     // handle the error here
-  //     console.log("ERROR: ", err);
-  //   },
-  // });
+  const [showMessageBoard, setShowMessageBoard] = useState(false);
+  const [messages, setMessages] = useState({})
 
-  // const getMessages = async () => {
-  //   let msg = {}
-  //   try {
-  //     await userMessages({
-  //       variables: {
-  //         input: {
-  //           userName: decodedToken.userName,
-  //         },
-  //       },
-  //     }).then((e) => {
-  //       msg = e.data.msgBoard
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  //   return msg
-  // };
+  const getMsgBoardData = (data) => {
+    setShowMessageBoard(data.TrueFalse)
+    setMessages(data.chats);
+  }
 
-  // useEffect(() => {
-  //   getMessages().then((e) => setMessages(e))
 
-  // }, [messages]);
-
-  // if (Object.keys(messages).length === 0) return <div>Loading...</div>;
 
   return (
     <Box
@@ -60,8 +33,8 @@ const Chat = () => {
         borderRadius="10px"
         pt="20px"
       >
-        <Sidebar />
-        <MessageBoard />
+        <Sidebar func={getMsgBoardData}/>
+        {showMessageBoard && <MessageBoard messages={messages} /> }
       </Box>
     </Box>
   );

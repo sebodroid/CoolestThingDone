@@ -6,7 +6,8 @@ import { useMutation, gql } from "@apollo/client";
 import { decodeToken } from "react-jwt";
 import { tokens } from "../theme";
 
-const MessageBoard = () => {
+const MessageBoard = (props) => {
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -46,25 +47,6 @@ const MessageBoard = () => {
 
   //Decode token and grabUsername
   const decodedToken = decodeToken(localStorage.getItem("token"));
-
-  // const GET_MESSAGES = gql`
-  //   query MsgBoardd($input: userName!) {
-  //     msgBoard(input: $input) {
-  //       userName
-  //       chats {
-  //         withWho {
-  //           friendUname
-  //           messages {
-  //             createdBy
-  //             createdAt
-  //             message
-  //             messageId
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // `;
 
   const SEND_MESSAGE = gql`
     mutation CreateMessage($input: MessageInput!) {
@@ -115,14 +97,26 @@ const MessageBoard = () => {
         ref={messagesEndRef}
         style={{ overflowY: "auto" }}
       >
-        <Box display="flex" flexDirection="column">
-          <Box alignSelf="flex-end" maxWidth="50%" wordWrap="break-word">
-            <SentMessage message="Hello world" />
-          </Box>
-          <Box alignSelf="flex-start" maxWidth="50%" wordWrap="break-word">
-            <ReceivedMessage message="Well hello there" />
-          </Box>
-        </Box>
+        {props.messages.map((item) => {
+          let display, message = "";
+
+          if(item.createdBy === decodedToken.userName){
+             display = "flex-end";
+             message = <SentMessage message = {item.message} />;
+          }
+          else{
+             display = "flex-start";
+             message = <ReceivedMessage message = {item.message} />;
+          }
+          return (
+            <Box display="flex" flexDirection="column">
+              <Box alignSelf={display} maxWidth="50%" wordWrap="break-word">
+                {message}
+              </Box>
+            </Box>
+          )
+        })}
+        
       </Box>
 
       <Box

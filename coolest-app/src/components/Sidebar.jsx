@@ -19,15 +19,16 @@ import robot from "../assets/robot.jpg";
 import { gql, useLazyQuery } from "@apollo/client";
 import { decodeToken } from "react-jwt";
 
-const Sidebar = () => {
+const Sidebar = (props) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [collapsed, setCollapsed] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
-  //let profileData = []
+  //Setting profiles on profileData value
   const [profileData, setProfileData] = useState([]);
 
+  //Using token to get userName
   const decodedToken = decodeToken(localStorage.getItem("token"));
 
   const GET_MESSAGES = gql`
@@ -48,8 +49,6 @@ const Sidebar = () => {
       }
     }
   `;
-
-  const [messages, setMessages] = useState({});
 
   const [userMessages] = useLazyQuery(GET_MESSAGES, {
     onCompleted: (data) => {
@@ -89,6 +88,7 @@ const Sidebar = () => {
       img: robot,
       username: user.friendUname,
       message: user.messages[user.messages.length - 1].message,
+      chats: user.messages
     }));
 
     setProfileData(profiles);
@@ -96,8 +96,6 @@ const Sidebar = () => {
 
   useEffect(() => {
     getMessages().then((e) => {
-      setMessages(e);
-
       if (Object.keys(e).length !== 0) {
         setProfiles(e);
       }
@@ -112,6 +110,10 @@ const Sidebar = () => {
   const handleCollapse = () => {
     setCollapsed(!collapsed);
   };
+
+  function showMessageBoard(item){
+    props.func({TrueFalse: true, chats:item.chats})
+  }
 
   return (
     <Box
@@ -164,6 +166,12 @@ const Sidebar = () => {
         ) : (
           filteredProfileData.map((item) => {
             return (
+            //Uing div to add onClick functionality for each Profile component
+            <div 
+            onClick={() => {
+              showMessageBoard(item)
+            }}
+            >
               <Profile
                 key={item.username}
                 img={item.img}
@@ -171,18 +179,27 @@ const Sidebar = () => {
                 message={item.message}
                 collapsed={collapsed}
               />
+            </div>
+              
             );
           })
         )
       ) : (
         profileData.map((item) => {
           return (
+            //Uing div to add onClick functionality for each Profile component
+            <div 
+            onClick={() => {
+              showMessageBoard(item)
+            }}
+            >
             <Profile
               img={item.img}
               username={item.username}
               message={item.message}
               collapsed={collapsed}
             />
+            </div>
           );
         })
       )}
