@@ -34,12 +34,14 @@ const resolvers = {
     },
 
     async createMessage(_, {input}){
-      const {createdBy, createdAt, message} = input;
+      const friendUname = input.createdBy.slice(input.createdBy.indexOf(":UNAME:") + 7).trim();
+      const { createdAt, message} = input;
+      const createdBy = input.createdBy.slice(0, input.createdBy.indexOf(":UNAME:")).trim();
+
       console.log("Resolvers messageBoard being hit")
-      const newMessage = await MessageBoard.updateOne({ userName: createdBy }, 
-    { $push: { "chats.withWho.1.messages": 
-    { "createdBy": createdBy, "createdAt": createdAt, "message": message, messageId: new mongoose.Types.ObjectId()} 
-    } 
+      const newMessage = await MessageBoard.updateOne({ userName: createdBy, "chats.withWho.friendUname": friendUname}, 
+    { $push: { "chats.withWho.$.messages": 
+    { "createdBy": createdBy, "createdAt": createdAt, "message": message, messageId: new mongoose.Types.ObjectId()} } 
     },
     { upsert: true}) 
     return {
@@ -48,9 +50,9 @@ const resolvers = {
       message: message,
     }
 
-    }
+  }
 
-  },
+},
 
   Query: {
     async loginUser(_, { input }, { res }) {

@@ -112,7 +112,7 @@ const Sidebar = (props) => {
   };
 
   function showMessageBoard(item){
-    props.func({TrueFalse: true, chats:item.chats})
+    props.func({TrueFalse: true, chats:item.chats, friendUname: item.username})
   }
 
   return (

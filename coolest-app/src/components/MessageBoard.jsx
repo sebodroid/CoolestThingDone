@@ -15,12 +15,12 @@ const MessageBoard = (props) => {
 
   const handleSubmit = async (values) => {
     try {
-      await createMessage({
+      await createMessage( {
         variables: {
           input: {
-            createdBy: decodedToken.userName,
+            createdBy: decodedToken.userName + " :UNAME:" +props.friendUname,
             createdAt: createDateTime(),
-            message: inputMessage !== "" && inputMessage,
+            message: inputMessage !== "" && inputMessage
           },
         },
       });

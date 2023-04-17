@@ -8,11 +8,13 @@ const Chat = () => {
   const colors = tokens(theme.palette.mode);
 
   const [showMessageBoard, setShowMessageBoard] = useState(false);
-  const [messages, setMessages] = useState({})
+  const [messages, setMessages] = useState({});
+  const [friendUname, setFriendUname] = useState();
 
   const getMsgBoardData = (data) => {
     setShowMessageBoard(data.TrueFalse)
     setMessages(data.chats);
+    setFriendUname(data.friendUname);
   }
 
 
@@ -34,7 +36,7 @@ const Chat = () => {
         pt="20px"
       >
         <Sidebar func={getMsgBoardData}/>
-        {showMessageBoard && <MessageBoard messages={messages} /> }
+        {showMessageBoard && <MessageBoard messages={messages} friendUname={friendUname}/> }
       </Box>
     </Box>
   );
