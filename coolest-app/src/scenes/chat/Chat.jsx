@@ -1,6 +1,7 @@
-import {React, useState} from "react";
-import { Box, useTheme } from "@mui/material";
+import { React, useState } from "react";
+import { Box, useTheme, useMediaQuery } from "@mui/material";
 import Sidebar from "../../components/Sidebar";
+import MobileSidebar from "../../components/MobileSidebar";
 import MessageBoard from "../../components/MessageBoard";
 import { tokens } from "../../theme";
 const Chat = () => {
@@ -12,12 +13,12 @@ const Chat = () => {
   const [friendUname, setFriendUname] = useState();
 
   const getMsgBoardData = (data) => {
-    setShowMessageBoard(data.TrueFalse)
+    setShowMessageBoard(data.TrueFalse);
     setMessages(data.chats);
     setFriendUname(data.friendUname);
-  }
+  };
 
-
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
     <Box
@@ -35,8 +36,14 @@ const Chat = () => {
         borderRadius="10px"
         pt="20px"
       >
-        <Sidebar func={getMsgBoardData}/>
-        {showMessageBoard && <MessageBoard messages={messages} friendUname={friendUname}/> }
+        {!isSmallScreen ? (
+          <Sidebar func={getMsgBoardData} />
+        ) : (
+          <MobileSidebar func={getMsgBoardData} />
+        )}
+        {showMessageBoard && (
+          <MessageBoard messages={messages} friendUname={friendUname} />
+        )}
       </Box>
     </Box>
   );
