@@ -30,8 +30,8 @@ const Chat = () => {
     >
       <Box
         display="flex"
-        height="80vh"
-        width="min(90%, 80rem)"
+        height="87vh"
+        width="min(95%, 80rem)"
         backgroundColor={colors.grey[900]}
         borderRadius="10px"
         pt="20px"
@@ -42,7 +42,11 @@ const Chat = () => {
           <MobileSidebar func={getMsgBoardData} />
         )}
         {showMessageBoard && (
-          <MessageBoard messages={messages} friendUname={friendUname} />
+          <MessageBoard
+            messages={messages}
+            friendUname={friendUname}
+            smallScreen={isSmallScreen}
+          />
         )}
       </Box>
     </Box>

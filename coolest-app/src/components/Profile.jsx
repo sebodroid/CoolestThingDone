@@ -28,7 +28,6 @@ const Profile = (props) => {
           height: !props.collapsed ? "70px" : "60px",
           width: !props.collapsed ? "70px" : "60px",
           borderRadius: "50%",
-          textAlign: "center",
         }}
       />
       {!props.collapsed && (

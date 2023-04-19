@@ -110,10 +110,6 @@ const MobileSidebar = (props) => {
       item.username.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1
   );
 
-  const handleCollapse = () => {
-    setCollapsed(!collapsed);
-  };
-
   function showMessageBoard(item) {
     props.func({
       TrueFalse: true,
@@ -125,91 +121,72 @@ const MobileSidebar = (props) => {
   return (
     <Box sx={{ position: visible ? "relative" : "absolute" }} zIndex="100">
       {visible ? (
-        <Slide direction="right" in={visible} mountOnEnter unmountOnExit>
-          <Box
-            height="100%"
-            borderRight={`1px solid ${colors.greenAccent[800]}`}
-            marginRight="20px"
-            position="absolute"
-            zIndex="100"
-            backgroundColor={colors.grey[900]}
-          >
-            <Box m="-10px 10px 20px">
-              <IconButton
-                onClick={() => {
-                  setVisible(!visible);
-                }}
-              >
-                <MenuIcon sx={{ color: `${colors.greenAccent[500]}` }} />
-              </IconButton>
-            </Box>
-            {!collapsed && (
-              <Box
-                display="flex"
-                backgroundColor={colors.primary[400]}
-                borderRadius="3px"
-                m="0 20px 20px"
-              >
-                <InputBase
-                  sx={{ ml: 2, flex: 1 }}
-                  placeholder="Search"
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                />
-                <IconButton type="button" sx={{ p: 1 }}>
-                  <SearchIcon />
-                </IconButton>
-              </Box>
-            )}
+        <Box
+          height="100%"
+          borderRight={`1px solid ${colors.greenAccent[800]}`}
+          marginRight="20px"
+          position="absolute"
+          zIndex="100"
+          backgroundColor={colors.grey[900]}
+        >
+          <Box m="-10px 10px 20px">
+            <IconButton
+              onClick={() => {
+                setVisible(!visible);
+              }}
+            >
+              <MenuIcon sx={{ color: `${colors.greenAccent[500]}` }} />
+            </IconButton>
+          </Box>
+          {!collapsed && (
             <Box
               display="flex"
-              justifyContent="center"
-              alignItems="center"
-              p="5px"
-              borderBottom="1px solid #fff"
-              m="10px"
+              backgroundColor={colors.primary[400]}
+              borderRadius="3px"
+              m="0 20px 20px"
             >
-              Start new chat
-              <IconButton>
-                <PersonAddIcon sx={{ fontSize: "20px" }} />
+              <InputBase
+                sx={{ ml: 2, flex: 1 }}
+                placeholder="Search"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
+              <IconButton type="button" sx={{ p: 1 }}>
+                <SearchIcon />
               </IconButton>
             </Box>
-            {/* Example of how we could utilize props for sidebar */}
-            {!collapsed ? (
-              filteredProfileData.length === 0 ? (
-                <Typography variant="h5" textAlign="center">
-                  "No Chats Found"
-                </Typography>
-              ) : (
-                filteredProfileData.map((item) => {
-                  return (
-                    //Uing div to add onClick functionality for each Profile component
-                    <div
-                      onClick={() => {
-                        showMessageBoard(item);
-                      }}
-                    >
-                      <Profile
-                        key={item.username}
-                        img={item.img}
-                        username={item.username}
-                        message={item.message}
-                        collapsed={collapsed}
-                      />
-                    </div>
-                  );
-                })
-              )
+          )}
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            p="5px"
+            borderBottom="1px solid #fff"
+            m="10px"
+          >
+            Start new chat
+            <IconButton>
+              <PersonAddIcon sx={{ fontSize: "20px" }} />
+            </IconButton>
+          </Box>
+          {/* Example of how we could utilize props for sidebar */}
+          {!collapsed ? (
+            filteredProfileData.length === 0 ? (
+              <Typography variant="h5" textAlign="center">
+                "No Chats Found"
+              </Typography>
             ) : (
-              profileData.map((item) => {
+              filteredProfileData.map((item) => {
                 return (
                   //Uing div to add onClick functionality for each Profile component
                   <div
                     onClick={() => {
                       showMessageBoard(item);
+                      setVisible(false);
                     }}
                   >
                     <Profile
+                      key={item.username}
                       img={item.img}
                       username={item.username}
                       message={item.message}
@@ -218,9 +195,28 @@ const MobileSidebar = (props) => {
                   </div>
                 );
               })
-            )}
-          </Box>
-        </Slide>
+            )
+          ) : (
+            profileData.map((item) => {
+              return (
+                //Uing div to add onClick functionality for each Profile component
+                <div
+                  onClick={() => {
+                    showMessageBoard(item);
+                    setVisible(false);
+                  }}
+                >
+                  <Profile
+                    img={item.img}
+                    username={item.username}
+                    message={item.message}
+                    collapsed={collapsed}
+                  />
+                </div>
+              );
+            })
+          )}
+        </Box>
       ) : (
         <Box m="-10px 10px 20px">
           <IconButton
