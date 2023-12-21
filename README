@@ -3,3 +3,6 @@ Go to this route when the server is running http://localhost:5001/graphql (shows
 
 Command to start WebUI: npm start (make sure to be in coolest-app folder)
 Go to this route when the UI is running http://localhost:3000/ when the UI is running
+
+
+Mongo connection settings is on the .ENV file on the server side
