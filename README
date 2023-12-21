@@ -1,0 +1,5 @@
+Command to start backend server: npm run startServer (make sure to be in the server folder)
+Go to this route when the server is running http://localhost:5001/graphql (shows the graphQl stuff)
+
+Command to start WebUI: npm start (make sure to be in coolest-app folder)
+Go to this route when the UI is running http://localhost:3000/ when the UI is running
