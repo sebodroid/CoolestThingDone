@@ -204,6 +204,7 @@ const Register = () => {
             </form>
           )}
         </Formik>
+        {error && <ErrorSnackbar message={error} onClose={handleCloseError} />}
       </Box>
       {error && <ErrorSnackbar message={error} onClose={handleCloseError} />}
     </Box>

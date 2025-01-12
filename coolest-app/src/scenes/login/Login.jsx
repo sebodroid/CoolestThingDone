@@ -114,7 +114,7 @@ const Login = () => {
   return (
     <Box
       m="20px"
-      height="80vh"
+      height="700px"
       display="flex"
       alignItems="center"
       justifyContent="center"
@@ -244,11 +244,11 @@ const Login = () => {
 
 const checkoutSchema = yup.object().shape({
   email: yup.string().email("invalid email").required("Required"),
-  password: yup.string().required("Required"),
+  pwd: yup.string().required("Required"),
 });
 const initialValues = {
   email: "",
-  password: "",
+  pwd: "",
 };
 
 export default Login;
