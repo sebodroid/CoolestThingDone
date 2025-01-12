@@ -5,7 +5,9 @@ import Topbar from "./scenes/global/Topbar";
 import Login from "./scenes/login/Login";
 import Register from "./scenes/register/Register";
 import Chat from "./scenes/chat/Chat";
+import Landing from "./scenes/landing/Landing";
 import { Route, Routes } from "react-router-dom";
+import PrivateRoutes from "./utils/PrivateRoutes";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -18,10 +20,12 @@ function App() {
           <main className="content">
             <Topbar />
             <Routes>
-              <Route path="/" element={<Chat />} />
+              <Route element={<PrivateRoutes />}>
+                <Route path="/chat" element={<Chat />} exact />
+              </Route>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/chat" element={<Chat />} />
+              <Route path="/" element={<Landing />} />
             </Routes>
           </main>
         </div>

@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
-import { User } from "./models.js";
-import pkg from "jsonwebtoken";
-const { jwt } = pkg;
+import { User, MessageBoard } from "./models.js";
+import jwt from "jsonwebtoken";
+import { serialize } from "cookie";
+import mongoose from "mongoose";
 
 const resolvers = {
   Mutation: {
@@ -24,33 +25,37 @@ const resolvers = {
         pwd: hashedPassword,
       });
       await user.save();
-      return user;
+
+      return {
+        userName: user.userName,
+        email: user.email,
+        pwd: user.pwd,
+      };
     },
-  },
-  Query: {
-    async loginUser(_, { input }) {
-      const { email, password } = input;
 
-      // Check if user with email exists
-      const user = await User.findOne({ email });
-      if (!user) {
-        throw new Error("User with that email does not exist");
-      }
+    async createMessage(_, {input}){
+      const friendUname = input.createdBy.slice(input.createdBy.indexOf(":UNAME:") + 7).trim();
+      const { createdAt, message} = input;
+      const createdBy = input.createdBy.slice(0, input.createdBy.indexOf(":UNAME:")).trim();
 
-      // Check if password matches hashed password
-      const isMatch = await bcrypt.compare(password, user.pwd);
-      if (!isMatch) {
-        throw new Error("Incorrect password");
-      }
-
-      // Generate JWT token and return user
-      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
-      return { user, token };
+      console.log("Resolvers messageBoard being hit")
+      const newMessage = await MessageBoard.updateOne({ userName: createdBy, "chats.withWho.friendUname": friendUname}, 
+    { $push: { "chats.withWho.$.messages": 
+    { "createdBy": createdBy, "createdAt": createdAt, "message": message, messageId: new mongoose.Types.ObjectId()} } 
     },
-  },
+    { upsert: true}) 
+    return {
+      createdBy: createdBy,
+      createdAt: createdAt,
+      message: message,
+    }
+
+  }
+
+},
 
   Query: {
-    async loginUser(_, { input }) {
+    async loginUser(_, { input }, { res }) {
       const { email, pwd } = input;
       // Check if user with email exists
       const user = await User.findOne({ email });
@@ -64,13 +69,30 @@ const resolvers = {
         throw new Error("Incorrect password");
       }
 
-      // Generate JWT token and return user
-      //const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
-      return user;
+      const token = jwt.sign({ userID: user._id, userName: user.userName }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+      res.setHeader(
+        "Set-Cookie",
+        serialize("token", token, {
+          httpOnly: true,
+          maxAge: 3600,
+          path: "/",
+        })
+      );
 
-      //return { user, token };
+      return { email: user.email, pwd: user.pwd, token: token };
     },
-  }
+
+    async messageBoard(_, { input }) {
+      // Check if user with email exists
+      const msgs = await MessageBoard.find({ userName: input.userName });
+      if (!msgs) {
+        throw new Error("messages do not exist");
+      }
+      return msgs[0];
+    },
+  },
 };
 
 export default resolvers;

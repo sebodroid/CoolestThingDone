@@ -28,7 +28,14 @@ const Register = () => {
         onClose={onClose}
         message={message}
         action={
-          <Button color="secondary" size="small" onClick={onClose}>
+          <Button
+            color="secondary"
+            size="small"
+            onClick={onClose}
+            sx={{
+              wordBreak: "break-word",
+            }}
+          >
             Close
           </Button>
         }
@@ -61,17 +68,9 @@ const Register = () => {
           },
         },
       });
-      console.log("User created:", data.registerUser);
+      window.location.href = "/login"; // Redirect to login route to login and receive a token
     } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        setError(error.response.data.message);
-      } else {
-        setError("Something went wrong");
-      }
+      setError(error.graphQLErrors[0].message);
     }
   };
 
@@ -207,6 +206,7 @@ const Register = () => {
         </Formik>
         {error && <ErrorSnackbar message={error} onClose={handleCloseError} />}
       </Box>
+      {error && <ErrorSnackbar message={error} onClose={handleCloseError} />}
     </Box>
   );
 };

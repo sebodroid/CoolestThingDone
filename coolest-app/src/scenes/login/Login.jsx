@@ -18,7 +18,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import { Link } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import { gql, useLazyQuery, useLazyQuery } from "@apollo/client";
+import { gql, useLazyQuery } from "@apollo/client";
 
 const Login = () => {
   const theme = useTheme();
@@ -47,37 +47,40 @@ const Login = () => {
       loginUser(input: $input) {
         email
         pwd
+        token
       }
     }
   `;
 
-  const [loginUser] = useLazyQuery(LOGIN_USER);
+  const [loginUser] = useLazyQuery(LOGIN_USER, {
+    onCompleted: (data) => {
+      // handle the successful response here
+      localStorage.setItem("token", data.loginUser.token);
+      window.location.href = "/chat"; // Redirect to chat route
+    },
+    onError: (err) => {
+      // handle the error here
+      console.log(error);
+    },
+  });
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
   const handleFormSubmit = async (values) => {
     try {
-      const { data } = await loginUser({
+      await loginUser({
         variables: {
           input: {
             email: values.email,
             pwd: values.password,
+            token: "",
           },
         },
-      });
-      localStorage.setItem("token", data.loginUser.token);
-      console.log("Successfully logged in:", data.loginUser);
+      }).then((e) => e.error && setError(e.error.graphQLErrors[0].message));
+
+      console.log("Successfully logged in");
     } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        setError(error.response.data.message);
-      } else {
-        setError("Something went wrong");
-        console.log(values.pwd);
-      }
+      console.log(error);
     }
   };
 
@@ -97,7 +100,11 @@ const Login = () => {
           }
         );
 
-        console.log(res.data);
+        //This is how you can access things such as the user's name for later use
+        console.log(res.data.name);
+
+        localStorage.setItem("token", response.access_token);
+        window.location.href = "/chat"; // Redirect to chat route
       } catch (err) {
         console.log(err);
       }

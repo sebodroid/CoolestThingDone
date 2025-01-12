@@ -10,15 +10,24 @@ import {
 } from "graphql";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
-import { User, MessageBoard } from "./Models.js";
+import { User, MessageBoard } from "./models.js";
 import resolvers from "./resolvers.js";
 import cors from "cors";
-// import AuthPayloadType from "./auth.js";
+import cookieParser from "cookie-parser";
+
 dotenv.config();
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: "http://localhost:3000",
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.use(cookieParser());
+
+console.log(cors(corsOptions));
 
 const UserType = new GraphQLObjectType({
   name: "User",
@@ -30,23 +39,57 @@ const UserType = new GraphQLObjectType({
   }),
 });
 
-const UserListType = new GraphQLObjectType({
-  name: "UserList",
-  description: "Return a list of user types",
+const UserLogin = new GraphQLObjectType({
+  name: "Login",
+  description: "login user",
   fields: () => ({
-    profiles: {
-      type: new GraphQLList(UserType),
-      resolve: () => getUsers(),
-    },
+    email: { type: new GraphQLNonNull(GraphQLString) },
+    pwd: { type: new GraphQLNonNull(GraphQLString) },
+    token: { type: new GraphQLNonNull(GraphQLString) },
   }),
 });
 
 const ChatsType = new GraphQLObjectType({
-  name: "Chats",
+  name: "chats",
   description: "Returns chats",
   fields: () => ({
-    withWho: { type: new GraphQLNonNull(Array) },
+    withWho: {
+      type: new GraphQLList(
+        new GraphQLObjectType({
+          name: "withWho",
+          fields: () => ({
+            friendUname: { type: new GraphQLNonNull(GraphQLString) },
+            messages: {
+              type: 
+              new GraphQLList(
+                new GraphQLNonNull(
+                  new GraphQLObjectType({
+                    name: "message",
+                    fields: () => ({
+                      createdBy: { type: new GraphQLNonNull(GraphQLString) },
+                      createdAt: { type: new GraphQLNonNull(GraphQLString) },
+                      message: { type: new GraphQLNonNull(GraphQLString) },
+                      messageId: { type: new GraphQLNonNull(GraphQLString) },
+                    }),
+                  })
+                )
+              ),
+            },
+          }),
+        })
+      ),
+    },
   }),
+});
+
+const MessageType = new GraphQLObjectType({
+  name: "Message",
+  description: "Create a new message",
+  fields: () => ({
+      createdBy: { type: new GraphQLNonNull(GraphQLString) },
+      createdAt: { type: new GraphQLNonNull(GraphQLString) },
+      message: { type: new GraphQLNonNull(GraphQLString) },
+    }),
 });
 
 const MessageBoardType = new GraphQLObjectType({
@@ -63,20 +106,20 @@ const schema = new GraphQLSchema({
     name: "Query",
     fields: {
       userList: {
-        type: UserListType,
+        type: new GraphQLNonNull(new GraphQLList(UserType)),
         resolve: () => getUsers(),
       },
       loginUser: {
-        type: UserType,
+        type: UserLogin,
         args: {
           input: {
             type: new GraphQLNonNull(
               new GraphQLInputObjectType({
                 name: "userInput",
-                fields: () =>
-                ({
+                fields: () => ({
                   email: { type: new GraphQLNonNull(GraphQLString) },
                   pwd: { type: new GraphQLNonNull(GraphQLString) },
+                  token: { type: new GraphQLNonNull(GraphQLString) },
                 }),
               })
             ),
@@ -84,12 +127,27 @@ const schema = new GraphQLSchema({
         },
         resolve: resolvers.Query.loginUser,
       },
-      // messageBoard: {
-      //   type: MessageBoardType,
-      //   resolve: () => getMessages(),
-      // },
+      msgBoard: {
+        type: new GraphQLNonNull(MessageBoardType),
+        args: {
+          input: {
+            type: new GraphQLNonNull(
+              new GraphQLInputObjectType({
+                name: "userName",
+                fields: () => ({
+                  userName: { type: new GraphQLNonNull(GraphQLString) },
+                }),
+              })
+            ),
+          },
+        },
+        resolve: resolvers.Query.messageBoard//getMessages(),
+      },
+      messageBoard: {
+        type: new GraphQLNonNull(new GraphQLList(MessageBoardType)),
+        resolve: () => getMessages(),
+      },
     },
-
   }),
   mutation: new GraphQLObjectType({
     name: "Mutation",
@@ -112,17 +170,24 @@ const schema = new GraphQLSchema({
         },
         resolve: resolvers.Mutation.registerUser,
       },
-<<<<<<< HEAD
-      loginUser: {
-        type: UserType,
+      createMessage: {
+        type: MessageType,
         args: {
-          email: { type: new GraphQLNonNull(GraphQLString) },
-          pwd: { type: new GraphQLNonNull(GraphQLString) },
+          input: {
+            type: new GraphQLNonNull(
+              new GraphQLInputObjectType({
+                name: "MessageInput",
+                fields: () => ({
+                  createdBy: { type: new GraphQLNonNull(GraphQLString) },
+                  createdAt: { type: new GraphQLNonNull(GraphQLString) },
+                  message: { type: new GraphQLNonNull(GraphQLString) },
+                }),
+              })
+            ),
+          },
         },
-        resolve: resolvers.Query.loginUser,
-      },
-=======
->>>>>>> 7a5a30762bbcc71040f48d00b1751e6d2d292bb2
+        resolve: resolvers.Mutation.createMessage/*() => createMessage(),*/
+      }
     },
   }),
 });
@@ -134,7 +199,7 @@ app.use(
     graphiql: true,
   })
 );
-app.listen(5000, () => console.log("Server is running"));
+app.listen(5001, () => console.log("Server is running"));
 
 const DB_URL = process.env.DBADDRESS;
 
@@ -159,22 +224,24 @@ async function getUsers() {
 
 async function getMessages() {
   try {
-    const msgBoard = await MessageBoard.find({ userName: "testUser101" });
+    const msgBoard = await MessageBoard.find({ userName: "sebNasty-Password1!" });
+    console.log(msgBoard)
     return msgBoard;
   } catch (e) {
     console.log("MESSAGE ERROR", e.message);
   }
 }
 
-//run();
-
-// async function run() { //Function to create a new DB user
-//   try {
-//     const user = new User({ userName: "user106", email: "user105@hotmail.com", pwd: "password" });
-//     await user.save();
-//     // const user = await User.find({ userName: "testUser101" })
-//     console.log("\n\n", user, "\n\n");
-//   } catch (e) {
-//     console.log("\n\n", e.message, "\n\n")
-//   }
-// }
+async function createMessage(){
+  try{
+    const message = await MessageBoard.updateOne({ userName: "testUser101" }, 
+    { $push: { "chats.withWho.1.messages": 
+    { "createdBy": "testUser101", "createdAt": "1679621208", "message": "Testing with server"} 
+    } 
+    },
+    { upsert: true}) 
+       return "message Created";
+  }catch(e){
+    console.log("Error creating message: ", e)
+  }
+}

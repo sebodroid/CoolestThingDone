@@ -1,64 +1,55 @@
-import React from "react";
-import { List, ListItem, ListItemText, Typography } from "@mui/material";
-
+import { React, useState } from "react";
+import { Box, useTheme, useMediaQuery } from "@mui/material";
+import Sidebar from "../../components/Sidebar";
+import MobileSidebar from "../../components/MobileSidebar";
+import MessageBoard from "../../components/MessageBoard";
+import { tokens } from "../../theme";
 const Chat = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+
+  const [showMessageBoard, setShowMessageBoard] = useState(false);
+  const [messages, setMessages] = useState({});
+  const [friendUname, setFriendUname] = useState();
+
+  const getMsgBoardData = (data) => {
+    setShowMessageBoard(data.TrueFalse);
+    setMessages(data.chats);
+    setFriendUname(data.friendUname);
+  };
+
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+
   return (
-    <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
-      <ListItem alignItems="flex-start">
-        <ListItemText
-          primary="UserName"
-          secondary={
-            <React.Fragment>
-              <Typography
-                sx={{ display: "inline" }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
-                Who sent the message
-              </Typography>
-              {": Hey how are you, this is the latest message"}
-            </React.Fragment>
-          }
-        />
-      </ListItem>
-      <ListItem alignItems="flex-start">
-        <ListItemText
-          primary="UserName"
-          secondary={
-            <React.Fragment>
-              <Typography
-                sx={{ display: "inline" }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
-                Who sent the message
-              </Typography>
-              {": Hey how are you, this is the latest message"}
-            </React.Fragment>
-          }
-        />
-      </ListItem>
-      <ListItem alignItems="flex-start">
-        <ListItemText
-          primary="UserName"
-          secondary={
-            <React.Fragment>
-              <Typography
-                sx={{ display: "inline" }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
-                Who sent the message
-              </Typography>
-              {": Hey how are you, this is the latest message"}
-            </React.Fragment>
-          }
-        />
-      </ListItem>
-    </List>
+    <Box
+      height={`calc(100vh - 78px)`}
+      width="100%"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Box
+        display="flex"
+        height="87vh"
+        width="min(95%, 80rem)"
+        backgroundColor={colors.grey[900]}
+        borderRadius="10px"
+        pt="20px"
+      >
+        {!isSmallScreen ? (
+          <Sidebar func={getMsgBoardData} />
+        ) : (
+          <MobileSidebar func={getMsgBoardData} />
+        )}
+        {showMessageBoard && (
+          <MessageBoard
+            messages={messages}
+            friendUname={friendUname}
+            smallScreen={isSmallScreen}
+          />
+        )}
+      </Box>
+    </Box>
   );
 };
 
