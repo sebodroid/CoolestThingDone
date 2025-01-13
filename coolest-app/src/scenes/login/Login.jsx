@@ -172,7 +172,7 @@ const Login = () => {
                   label="Password"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.password}
+                  value={values.password} // Ensure 'password' is used consistently
                   name="password"
                   error={!!touched.password && !!errors.password}
                   helperText={touched.password && errors.password}
@@ -244,11 +244,11 @@ const Login = () => {
 
 const checkoutSchema = yup.object().shape({
   email: yup.string().email("invalid email").required("Required"),
-  pwd: yup.string().required("Required"),
+  password: yup.string().required("Required"),
 });
 const initialValues = {
   email: "",
-  pwd: "",
+  password: "",
 };
 
 export default Login;
