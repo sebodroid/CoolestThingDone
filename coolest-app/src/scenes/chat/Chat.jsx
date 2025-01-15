@@ -11,6 +11,12 @@ const Chat = () => {
   const [showMessageBoard, setShowMessageBoard] = useState(false);
   const [messages, setMessages] = useState({});
   const [friendUname, setFriendUname] = useState();
+  const [profileSearch, setProfileSearch] = useState(false);
+
+
+  const updateSearchState = () => {
+    setProfileSearch(!profileSearch);
+  }
 
   const getMsgBoardData = (data) => {
     setShowMessageBoard(data.TrueFalse);
@@ -37,15 +43,16 @@ const Chat = () => {
         pt="20px"
       >
         {!isSmallScreen ? (
-          <Sidebar func={getMsgBoardData} />
+          <Sidebar func={getMsgBoardData} profileSearch={profileSearch} updateSearchState={updateSearchState} />
         ) : (
-          <MobileSidebar func={getMsgBoardData} />
+          <MobileSidebar profileSearch={profileSearch} updateSearchState={updateSearchState} func={getMsgBoardData} />
         )}
         {showMessageBoard && (
           <MessageBoard
             messages={messages}
             friendUname={friendUname}
             smallScreen={isSmallScreen}
+            profileSearch={profileSearch}
           />
         )}
       </Box>

@@ -95,6 +95,9 @@ const MessageBoard = (props) => {
       justifyContent="space-between"
       padding="16px 0"
       position="relative"
+      sx={{
+        filter: !props.profileSearch ? "blur(6px)" : "none",
+      }}
     >
       <Box
         flex="1 1 auto"

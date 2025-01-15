@@ -24,7 +24,6 @@ const Sidebar = (props) => {
   const colors = tokens(theme.palette.mode);
   const [collapsed, setCollapsed] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-
   //Setting profiles on profileData value
   const [profileData, setProfileData] = useState([]);
 
@@ -49,6 +48,13 @@ const Sidebar = (props) => {
       }
     }
   `;
+
+  const hover = {
+    "&:hover": {
+      backgroundColor: `${colors.primary[700]}`,
+      cursor: "pointer",
+    },
+  };
 
   const [userMessages] = useLazyQuery(GET_MESSAGES, {
     onCompleted: (data) => {
@@ -116,12 +122,33 @@ const Sidebar = (props) => {
   }
 
   return (
+<>
+    {!props.profileSearch && (
+      <Box
+        position="absolute"
+        left="50%"
+        top="50%"
+        height="800px"
+        width="min(500px, 95%)"
+        zIndex={1000}
+        borderRadius="10px"
+        border={`1px solid ${colors.greenAccent[600]};`}
+        backgroundColor={colors.grey[900]}
+        sx={{transform: "translate(-50%, -50%)"}}
+      >
+      </Box>
+    )}
+
     <Box
       height="100%"
       borderRight={`1px solid ${colors.greenAccent[800]}`}
       marginRight="20px"
       position="relative"
+      sx={{
+        filter: !props.profileSearch ? "blur(6px)" : "none",
+      }}
     >
+          
       {!collapsed && (
         <Box
           display="flex"
@@ -140,6 +167,8 @@ const Sidebar = (props) => {
           </IconButton>
         </Box>
       )}
+
+      {/* Start new chat */}
       <Box
         display="flex"
         justifyContent="center"
@@ -147,6 +176,8 @@ const Sidebar = (props) => {
         p="5px"
         borderBottom="1px solid #fff"
         m="10px"
+        sx={hover}
+        onClick={props.updateSearchState}
       >
         {!collapsed && "Start new chat "}
         <IconButton>
@@ -225,6 +256,7 @@ const Sidebar = (props) => {
         )}
       </IconButton>
     </Box>
+    </>
   );
 };
 
