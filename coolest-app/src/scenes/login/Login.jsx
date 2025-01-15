@@ -172,7 +172,7 @@ const Login = () => {
                   label="Password"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.password}
+                  value={values.password} // Ensure 'password' is used consistently
                   name="password"
                   error={!!touched.password && !!errors.password}
                   helperText={touched.password && errors.password}
